@@ -127,17 +127,24 @@ export default function AdminComplaints() {
               <tbody>
                 {complaints.map(c => (
                   <tr key={c._id}>
-                    <td>
-                      <div style={{ fontWeight: 500, fontSize: 13 }}>{c.user?.name}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.user?.email}</div>
+                    <td data-label="User">
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-sm"
+                        onClick={() => navigate(`/admin/users/${c.user?._id}`)}
+                        style={{ textAlign: 'left', width: '100%', padding: 0, border: 'none', background: 'transparent' }}
+                      >
+                        <div style={{ fontWeight: 500, fontSize: 13 }}>{c.user?.name}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.user?.email}</div>
+                      </button>
                     </td>
-                    <td style={{ fontWeight: 500, maxWidth: 180 }}>{c.title}</td>
-                    <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.category}</td>
-                    <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.contactPhone || '—'}</td>
-                    <td><span className={`badge badge-${c.priority?.toLowerCase()}`}>{c.priority}</span></td>
-                    <td>{statusBadge(c.status)}</td>
-                    <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
-                    <td><button className="btn btn-outline btn-sm" onClick={() => openModal(c)}>Manage</button></td>
+                    <td data-label="Title" style={{ fontWeight: 500, maxWidth: 180 }}>{c.title}</td>
+                    <td data-label="Category" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.category}</td>
+                    <td data-label="Contact" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.contactPhone || '—'}</td>
+                    <td data-label="Priority"><span className={`badge badge-${c.priority?.toLowerCase()}`}>{c.priority}</span></td>
+                    <td data-label="Status">{statusBadge(c.status)}</td>
+                    <td data-label="Date" style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td data-label="Action"><button className="btn btn-outline btn-sm" onClick={() => openModal(c)}>Manage</button></td>
                   </tr>
                 ))}
               </tbody>

@@ -12,6 +12,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminComplaints from './pages/AdminComplaints';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserDetail from './pages/AdminUserDetail';
+import Profile from './pages/Profile';
 import Sidebar from './components/Sidebar';
 
 // Route guard for logged-in users
@@ -49,6 +50,7 @@ function AppRoutes() {
       <Route path="/dashboard" element={<PrivateRoute><AppLayout><Dashboard /></AppLayout></PrivateRoute>} />
       <Route path="/complaints/new" element={<PrivateRoute><AppLayout><ComplaintForm /></AppLayout></PrivateRoute>} />
       <Route path="/complaints" element={<PrivateRoute><AppLayout><MyComplaints /></AppLayout></PrivateRoute>} />
+      <Route path="/profile" element={<PrivateRoute><AppLayout><Profile /></AppLayout></PrivateRoute>} />
 
       {/* Admin routes */}
       <Route path="/admin" element={<AdminRoute><AppLayout><AdminDashboard /></AppLayout></AdminRoute>} />
