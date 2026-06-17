@@ -79,7 +79,27 @@ Runs at `http://localhost:3000`
 
 ---
 
-## 🔐 Making a User an Admin
+## � Deployment
+
+### Frontend on Vercel
+- The frontend is configured for Vercel with `frontend/vercel.json`.
+- In Vercel, deploy the project from the `telecom-complaint-system/frontend` folder.
+- Build command: `npm run build`
+- Output directory: `build`
+- Add an environment variable:
+  - `REACT_APP_API_URL` = `https://<your-backend-host>/api`
+
+### Backend hosting
+- Deploy the backend separately to a service like Render, Railway, Fly, or Heroku.
+- Use the `backend` folder as the service root.
+- Configure environment variables:
+  - `MONGO_URI`
+  - `JWT_SECRET`
+  - `PORT` (optional)
+
+---
+
+## �🔐 Making a User an Admin
 
 After registering normally, open MongoDB Compass or the Atlas UI and run:
 
