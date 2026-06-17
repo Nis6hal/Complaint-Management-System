@@ -44,12 +44,7 @@ export default function Login() {
           </div>
           <div className="form-group">
             <label>Password</label>
-            <div className="password-input-wrapper">
-              <input className="form-control" type={showPassword ? 'text' : 'password'} name="password" placeholder="••••••••" value={form.password} onChange={handleChange} required />
-              <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
+            <input className="form-control" type="password" name="password" placeholder="••••••••" value={form.password} onChange={handleChange} required />
             <Link to="/forgot-password" className="forgot-password-link" style={{ fontSize: '12px', color: '#667eea', textDecoration: 'none', marginTop: '5px', display: 'block' }}>Forgot Password?</Link>
           </div>
           {error && <p className="error-msg">{error}</p>}
