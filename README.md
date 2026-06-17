@@ -79,6 +79,19 @@ Runs at `http://localhost:3000`
 
 ---
 
+---
+
+## ?? Deployment (Render + Vercel)
+
+**For detailed step-by-step deployment instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)**
+
+Quick summary:
+1. Deploy backend to Render (Web Service) ? get backend URL
+2. Deploy frontend to Vercel (set Root Directory to rontend) ? set REACT_APP_API_URL env var to backend URL
+3. Frontend calls backend via API, both are live!
+
+The guide includes troubleshooting, environment variable reference, and tips for free tier services.
+
 ## � Deployment
 
 ### Frontend on Vercel
