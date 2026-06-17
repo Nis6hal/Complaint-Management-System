@@ -8,6 +8,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -17,6 +18,7 @@ export default function Login() {
     setLoading(true);
     try {
       const user = await login(form.email, form.password);
+      setForm({ email: '', password: '' });
       navigate(user.role === 'admin' ? '/admin' : '/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -42,7 +44,12 @@ export default function Login() {
           </div>
           <div className="form-group">
             <label>Password</label>
-            <input className="form-control" type="password" name="password" placeholder="••••••••" value={form.password} onChange={handleChange} required />
+            <div className="password-input-wrapper">
+              <input className="form-control" type={showPassword ? 'text' : 'password'} name="password" placeholder="••••••••" value={form.password} onChange={handleChange} required />
+              <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                {showPassword ? '👁️' : '👁️‍🗨️'}
+              </button>
+            </div>
             <Link to="/forgot-password" className="forgot-password-link" style={{ fontSize: '12px', color: '#667eea', textDecoration: 'none', marginTop: '5px', display: 'block' }}>Forgot Password?</Link>
           </div>
           {error && <p className="error-msg">{error}</p>}

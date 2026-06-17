@@ -100,19 +100,49 @@ input, select, textarea {
   padding: 10px 14px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
-  background: var(--surface2);
+  background: #ffffff !important;
   color: #0f1e3c !important;
   transition: border-color 0.18s;
   outline: none;
   font-size: 15px;
 }
-.form-control:focus { border-color: var(--blue); background: #fff; color: #0f1e3c !important; }
+.form-control:focus { border-color: var(--blue); background: #fff !important; color: #0f1e3c !important; }
 .form-control::placeholder { color: #a0aec0 !important; }
 .form-control:-webkit-autofill,
 .form-control:-webkit-autofill:hover,
 .form-control:-webkit-autofill:focus { 
-  -webkit-box-shadow: 0 0 0 1000px #f8faff inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
   -webkit-text-fill-color: #0f1e3c !important;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .form-control {
+  padding-right: 45px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  transition: opacity 0.2s;
+}
+
+.password-toggle:hover {
+  opacity: 0.7;
 }
 
 .error-msg { color: var(--danger); font-size: 13px; margin-top: 6px; }
