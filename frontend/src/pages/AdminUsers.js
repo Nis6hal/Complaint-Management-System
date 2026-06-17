@@ -46,7 +46,13 @@ export default function AdminUsers() {
                 {users.map(u => {
                   const initials = u.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U';
                   return (
-                    <tr key={u._id}>
+                    <tr
+                    key={u._id}
+                    className="clickable-row"
+                    onClick={() => navigate(`/admin/users/${u._id}`)}
+                    title="View user details"
+                    style={{ cursor: 'pointer' }}
+                  >
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
