@@ -24,10 +24,16 @@ app.use('/api/admin', adminRoutes);
 app.get('/', (req, res) => res.json({ message: 'Complaint Management API running' }));
 
 // Connect to MongoDB and start server
+const mongooseOptions = {
+  dbName: process.env.DB_NAME || 'ComplaintMS',
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(process.env.MONGO_URI, mongooseOptions)
   .then(() => {
-    console.log('✅ MongoDB connected');
+    console.log('✅ MongoDB connected to', mongooseOptions.dbName);
     app.listen(process.env.PORT || 5000, () =>
       console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
     );
