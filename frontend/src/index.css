@@ -126,15 +126,15 @@ input, select, textarea {
   -webkit-appearance: none;
 }
 
-.password-input-wrapper .form-control::-ms-reveal,
-.password-input-wrapper .form-control::-ms-clear,
-.password-input-wrapper .form-control::-webkit-textfield-decoration-container,
-.password-input-wrapper .form-control::-webkit-credentials-auto-fill-button,
-.password-input-wrapper .form-control::-webkit-textfield-decoration-container(button),
-.password-input-wrapper .form-control::-webkit-textfield-decoration-button {
+.password-input-wrapper .form-control[type="password"],
+.password-input-wrapper .form-control[type="password"]::-webkit-textfield-decoration-button,
+.password-input-wrapper .form-control[type="password"]::-webkit-textfield-decoration-container,
+.password-input-wrapper .form-control[type="password"]::-webkit-credentials-auto-fill-button,
+.password-input-wrapper .form-control[type="password"]::-ms-reveal,
+.password-input-wrapper .form-control[type="password"]::-ms-clear {
   display: none !important;
-  width: 0;
-  height: 0;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .password-toggle {
