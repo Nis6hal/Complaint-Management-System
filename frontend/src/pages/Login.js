@@ -43,6 +43,7 @@ export default function Login() {
           <div className="form-group">
             <label>Password</label>
             <input className="form-control" type="password" name="password" placeholder="••••••••" value={form.password} onChange={handleChange} required />
+            <Link to="/forgot-password" className="forgot-password-link" style={{ fontSize: '12px', color: '#667eea', textDecoration: 'none', marginTop: '5px', display: 'block' }}>Forgot Password?</Link>
           </div>
           {error && <p className="error-msg">{error}</p>}
           <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: 8, padding: '12px' }} disabled={loading}>
