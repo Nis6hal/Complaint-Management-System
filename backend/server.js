@@ -33,7 +33,7 @@ const mongooseOptions = {
 mongoose
   .connect(process.env.MONGO_URI, mongooseOptions)
   .then(() => {
-    console.log('✅ MongoDB connected to', mongooseOptions.dbName);
+    console.log('✅ MongoDB connected to', mongoose.connection.db.databaseName);
     app.listen(process.env.PORT || 5000, () =>
       console.log(`🚀 Server running on port ${process.env.PORT || 5000}`)
     );
