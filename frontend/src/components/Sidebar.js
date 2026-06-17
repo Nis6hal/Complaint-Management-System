@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -15,15 +15,14 @@ const AdminNav = [
   { label: 'Profile', icon: '👤', path: '/profile' },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ menuOpen, onMenuClose }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
+    onMenuClose();
+  }, [location.pathname, onMenuClose]);
 
   if (!user) return null;
 
@@ -31,11 +30,7 @@ export default function Sidebar() {
   const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U';
 
   return (
-    <>
-      <button className="mobile-menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-        ☰ {menuOpen ? 'Close' : 'Menu'}
-      </button>
-      <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
+    <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-logo">
           <h2>📋 CMS</h2>
           <span>{user.role === 'admin' ? 'Admin Panel' : 'Customer Portal'}</span>
@@ -71,6 +66,5 @@ export default function Sidebar() {
           </button>
         </div>
       </aside>
-    </>
   );
 }

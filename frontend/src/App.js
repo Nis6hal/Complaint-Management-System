@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -14,6 +14,7 @@ import AdminUsers from './pages/AdminUsers';
 import AdminUserDetail from './pages/AdminUserDetail';
 import Profile from './pages/Profile';
 import Sidebar from './components/Sidebar';
+import Header from './components/Header';
 
 // Route guard for logged-in users
 const PrivateRoute = ({ children }) => {
@@ -31,13 +32,19 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
-// Layout wrapper with sidebar
-const AppLayout = ({ children }) => (
-  <div className="page-wrapper">
-    <Sidebar />
-    <main className="main-content">{children}</main>
-  </div>
-);
+// Layout wrapper with header and sidebar
+const AppLayout = ({ children }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  return (
+    <>
+      <Header menuOpen={menuOpen} onMenuToggle={() => setMenuOpen(!menuOpen)} />
+      <div className="page-wrapper">
+        <Sidebar menuOpen={menuOpen} onMenuClose={() => setMenuOpen(false)} />
+        <main className="main-content">{children}</main>
+      </div>
+    </>
+  );
+};
 
 function AppRoutes() {
   return (
