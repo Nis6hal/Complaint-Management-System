@@ -1,0 +1,65 @@
+import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+const UserNav = [
+  { label: 'Dashboard', icon: '🏠', path: '/dashboard' },
+  { label: 'New Complaint', icon: '✏️', path: '/complaints/new' },
+  { label: 'My Complaints', icon: '📋', path: '/complaints' },
+];
+
+const AdminNav = [
+  { label: 'Overview', icon: '📊', path: '/admin' },
+  { label: 'All Complaints', icon: '📋', path: '/admin/complaints' },
+  { label: 'Users', icon: '👥', path: '/admin/users' },
+];
+
+export default function Sidebar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  if (!user) return null;
+
+  const navItems = user.role === 'admin' ? AdminNav : UserNav;
+  const initials = user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U';
+
+  return (
+    <aside className="sidebar">
+      <div className="sidebar-logo">
+        <h2>📋 CMS</h2>
+        <span>{user.role === 'admin' ? 'Admin Panel' : 'Customer Portal'}</span>
+      </div>
+
+      <nav className="sidebar-nav">
+        {navItems.map((item) => (
+          <button
+            key={item.path}
+            className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
+            onClick={() => navigate(item.path)}
+          >
+            <span className="nav-icon">{item.icon}</span>
+            {item.label}
+          </button>
+        ))}
+      </nav>
+
+      <div className="sidebar-footer">
+        <div className="sidebar-user">
+          <div className="avatar">{initials}</div>
+          <div className="user-info">
+            <span className="user-name">{user.name}</span>
+            <small>{user.role}</small>
+          </div>
+        </div>
+        <button
+          className="nav-item"
+          onClick={logout}
+          style={{ color: '#f87171', marginTop: 4 }}
+        >
+          <span className="nav-icon">🚪</span> Logout
+        </button>
+      </div>
+    </aside>
+  );
+}
