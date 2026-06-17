@@ -10,7 +10,8 @@
       "routePrefix": "/_/backend",
       "framework": "nodejs",
       "runtime": "nodejs",
-      "entrypoint": "server.js"
+      "entrypoint": "server.js",
+      "builder": "@vercel/node"
     }
   }
 }
