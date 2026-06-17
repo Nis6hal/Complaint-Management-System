@@ -123,6 +123,18 @@ input, select, textarea {
 
 .password-input-wrapper .form-control {
   padding-right: 45px;
+  -webkit-appearance: none;
+}
+
+.password-input-wrapper .form-control::-ms-reveal,
+.password-input-wrapper .form-control::-ms-clear,
+.password-input-wrapper .form-control::-webkit-textfield-decoration-container,
+.password-input-wrapper .form-control::-webkit-credentials-auto-fill-button,
+.password-input-wrapper .form-control::-webkit-textfield-decoration-container(button),
+.password-input-wrapper .form-control::-webkit-textfield-decoration-button {
+  display: none !important;
+  width: 0;
+  height: 0;
 }
 
 .password-toggle {
