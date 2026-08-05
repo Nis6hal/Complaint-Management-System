@@ -21,15 +21,38 @@ router.post('/', async (req, res) => {
       preferredContactMethod,
     } = req.body;
 
-    if (!title || !category || !description || !contactPhone)
-      return res.status(400).json({ message: 'Title, category, description and contact phone are required.' });
+    let aiCategory = '';
+    let aiPriority = priority || 'Medium';
+    let department = 'Customer Support';
+    let aiConfidence = 0.0;
+
+    // Trigger AI prediction call from Python FastAPI service
+    try {
+      const axios = require('axios');
+      const aiResponse = await axios.post('http://127.0.0.1:8000/predict', {
+        complaint: `${title}. ${description}`
+      }, { timeout: 3000 });
+
+      if (aiResponse.data) {
+        aiCategory = aiResponse.data.category || '';
+        aiPriority = aiResponse.data.priority || aiPriority;
+        department = aiResponse.data.department || department;
+        aiConfidence = aiResponse.data.confidence || 0.95;
+      }
+    } catch (aiErr) {
+      console.warn('AI Model Inference Service notice:', aiErr.message);
+    }
 
     const complaint = await Complaint.create({
       user: req.user._id,
       title,
       category,
       description,
-      priority: priority || 'Medium',
+      priority: aiPriority,
+      aiCategory,
+      aiPriority,
+      department,
+      aiConfidence,
       contactName,
       contactPhone,
       contactEmail,

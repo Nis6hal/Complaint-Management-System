@@ -47,6 +47,9 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+import AIChatbotWidget from "./components/AIChatbotWidget";
+import AIDashboardPage from "./pages/AIDashboardPage";
+
 // Layout wrapper with header and sidebar
 const AppLayout = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,6 +62,7 @@ const AppLayout = ({ children }) => {
         <Sidebar menuOpen={menuOpen} onMenuClose={closeMenu} />
         <main className="main-content">{children}</main>
       </div>
+      <AIChatbotWidget />
     </>
   );
 };
@@ -70,7 +74,17 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* User routes */}
+      {/* Admin and User routes */}
+      <Route
+        path="/ai-analytics"
+        element={
+          <AdminRoute>
+            <AppLayout>
+              <AIDashboardPage />
+            </AppLayout>
+          </AdminRoute>
+        }
+      />
       <Route
         path="/dashboard"
         element={

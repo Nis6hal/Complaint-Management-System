@@ -63,6 +63,51 @@ const complaintSchema = new mongoose.Schema(
       enum: ['Pending', 'In Progress', 'Resolved', 'Closed'],
       default: 'Pending',
     },
+    ticketId: {
+      type: String,
+      unique: true,
+    },
+    aiCategory: {
+      type: String,
+      default: '',
+    },
+    aiPriority: {
+      type: String,
+      default: '',
+    },
+    department: {
+      type: String,
+      default: '',
+    },
+    aiConfidence: {
+      type: Number,
+      default: 0,
+    },
+    sentiment: {
+      type: String,
+      enum: ['Happy', 'Neutral', 'Frustrated', 'Angry'],
+      default: 'Neutral',
+    },
+    aiSummary: {
+      type: String,
+      default: '',
+    },
+    district: {
+      type: String,
+      default: 'Kathmandu',
+    },
+    province: {
+      type: String,
+      default: 'Bagmati',
+    },
+    slaHours: {
+      type: Number,
+      default: 24,
+    },
+    duplicateMatchTicketId: {
+      type: String,
+      default: '',
+    },
     adminNote: {
       type: String,
       default: '',
@@ -74,8 +119,12 @@ const complaintSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Auto-set resolvedAt when status changes to Resolved
+// Auto-generate ticketId & set resolvedAt when status changes to Resolved
 complaintSchema.pre('save', function (next) {
+  if (!this.ticketId) {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    this.ticketId = `CMP${randomNum}`;
+  }
   if (this.isModified('status') && this.status === 'Resolved') {
     this.resolvedAt = new Date();
   }

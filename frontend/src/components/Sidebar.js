@@ -10,6 +10,7 @@ const UserNav = [
 
 const AdminNav = [
   { label: "Overview", icon: "📊", path: "/admin" },
+  { label: "AI Intelligence", icon: "🤖", path: "/ai-analytics" },
   { label: "All Complaints", icon: "📋", path: "/admin/complaints" },
   { label: "Users", icon: "👥", path: "/admin/users" },
   { label: "Profile", icon: "👤", path: "/profile" },

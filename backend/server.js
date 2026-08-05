@@ -8,6 +8,7 @@ dotenv.config();
 const authRoutes = require('./routes/auth');
 const complaintRoutes = require('./routes/complaints');
 const adminRoutes = require('./routes/admin');
+const aiRoutes = require('./routes/ai');
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Health check
 app.get('/', (req, res) => res.json({ message: 'Complaint Management API running' }));
