@@ -49,7 +49,7 @@ export default function AdminUserDetail() {
           </div>
         ) : (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 24 }}>
+            <div className="responsive-grid-2" style={{ marginBottom: 24 }}>
               <div>
                 <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>{user.name}</div>
                 <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>{user.email}</div>
@@ -94,10 +94,10 @@ export default function AdminUserDetail() {
                     <tbody>
                       {latestComplaints.map((c) => (
                         <tr key={c._id}>
-                          <td style={{ fontWeight: 500 }}>{c.title}</td>
-                          <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.category}</td>
-                          <td style={{ fontSize: 13 }}>{c.status}</td>
-                          <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                          <td data-label="Title" style={{ fontWeight: 500 }}>{c.title}</td>
+                          <td data-label="Category" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.category}</td>
+                          <td data-label="Status" style={{ fontSize: 13 }}>{c.status}</td>
+                          <td data-label="Date" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
                         </tr>
                       ))}
                     </tbody>

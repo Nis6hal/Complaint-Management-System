@@ -83,14 +83,14 @@ export default function AdminComplaints() {
       {/* Filters */}
       <div className="card" style={{ marginBottom: 20, padding: 16 }}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-          <select className="form-control" name="status" value={filters.status} onChange={handleFilterChange} style={{ width: 160 }}>
+          <select className="form-control filter-select" name="status" value={filters.status} onChange={handleFilterChange}>
             <option value="">All Statuses</option>
             {STATUSES.map(s => <option key={s}>{s}</option>)}
           </select>
-          <select className="form-control" name="category" value={filters.category} onChange={handleFilterChange} style={{ width: 180 }}>
+          <select className="form-control filter-select" name="category" value={filters.category} onChange={handleFilterChange}>
             {CATEGORIES.map(c => <option key={c} value={c}>{c || 'All Categories'}</option>)}
           </select>
-          <select className="form-control" name="priority" value={filters.priority} onChange={handleFilterChange} style={{ width: 150 }}>
+          <select className="form-control filter-select" name="priority" value={filters.priority} onChange={handleFilterChange}>
             <option value="">All Priorities</option>
             {PRIORITIES.map(p => <option key={p}>{p}</option>)}
           </select>
@@ -189,7 +189,7 @@ export default function AdminComplaints() {
                 {selected.description}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div className="responsive-grid-2">
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label>Update Status</label>
                   <select className="form-control" value={updateForm.status} onChange={e => setUpdateForm({ ...updateForm, status: e.target.value })}>

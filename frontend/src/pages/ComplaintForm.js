@@ -72,7 +72,7 @@ export default function ComplaintForm() {
             <input className="form-control" name="title" placeholder="Brief summary of the issue" value={form.title} onChange={handleChange} required />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="responsive-grid-2">
             <div className="form-group">
               <label>Category *</label>
               <select className="form-control" name="category" value={form.category} onChange={handleChange} required>
@@ -88,7 +88,7 @@ export default function ComplaintForm() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
+          <div className="responsive-grid-2" style={{ marginTop: 8 }}>
             <div className="form-group">
               <label>Contact Name</label>
               <input className="form-control" name="contactName" placeholder="Name on this complaint" value={form.contactName} onChange={handleChange} />
@@ -99,7 +99,7 @@ export default function ComplaintForm() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
+          <div className="responsive-grid-2" style={{ marginTop: 8 }}>
             <div className="form-group">
               <label>Contact Email</label>
               <input className="form-control" type="email" name="contactEmail" placeholder="Email for this complaint" value={form.contactEmail} onChange={handleChange} />

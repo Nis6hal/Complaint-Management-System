@@ -21,7 +21,7 @@ export default function Profile() {
       </div>
 
       <div className="card">
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
+        <div className="responsive-grid-2" style={{ alignItems: 'start' }}>
           <div>
             <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 12 }}>Account Information</div>
             <div style={{ display: 'grid', gap: 12 }}>

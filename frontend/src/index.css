@@ -795,3 +795,26 @@ tbody tr:last-child td {
         word-break: break-word;
     }
 }
+
+/* Responsive grids */
+.responsive-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+@media (max-width: 600px) {
+    .responsive-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.button-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.filter-select {
+    max-width: 200px;
+    flex: 1 1 140px;
+}

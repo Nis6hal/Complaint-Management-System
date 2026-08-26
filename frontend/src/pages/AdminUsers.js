@@ -53,7 +53,7 @@ export default function AdminUsers() {
                     title="View user details"
                     style={{ cursor: 'pointer' }}
                   >
-                      <td>
+                      <td data-label="User">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
                             {initials}
@@ -61,9 +61,9 @@ export default function AdminUsers() {
                           <span style={{ fontWeight: 500 }}>{u.name}</span>
                         </div>
                       </td>
-                      <td style={{ fontSize: 13 }}>{u.email}</td>
-                      <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{u.phone || '—'}</td>
-                      <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                      <td data-label="Email" style={{ fontSize: 13 }}>{u.email}</td>
+                      <td data-label="Phone" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{u.phone || '—'}</td>
+                      <td data-label="Registered" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
                     </tr>
                   );
                 })}

@@ -77,14 +77,12 @@ export default function MyComplaints() {
               <tbody>
                 {complaints.map(c => (
                   <tr key={c._id}>
-                    <td style={{ fontWeight: 500 }}>{c.title}</td>
-                    <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.category}</td>
-                    <td>{priorityBadge(c.priority)}</td>
-                    <td>{statusBadge(c.status)}</td>
-                    <td style={{ fontSize: 13, color: 'var(--text-muted)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
-                    <td>
-                      <button className="btn btn-outline btn-sm" onClick={() => setSelected(c)}>View</button>
-                    </td>
+                    <td data-label="Title" style={{ fontWeight: 500 }}>{c.title}</td>
+                    <td data-label="Category" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{c.category}</td>
+                    <td data-label="Priority">{priorityBadge(c.priority)}</td>
+                    <td data-label="Status">{statusBadge(c.status)}</td>
+                    <td data-label="Submitted" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td data-label="Action"><button className="btn btn-outline btn-sm" onClick={() => setSelected(c)}>View</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -113,7 +111,7 @@ export default function MyComplaints() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+              <div className="responsive-grid-2" style={{ marginBottom: 16 }}>
                 <div>
                   <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)', marginBottom: 4 }}>Category</div>
                   <div style={{ fontSize: 14 }}>{selected.category}</div>

@@ -60,7 +60,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
+      <div className="button-row">
         <button className="btn btn-primary" onClick={() => navigate('/complaints/new')}>
           ✏️ Submit New Complaint
         </button>
@@ -99,11 +99,11 @@ export default function Dashboard() {
               <tbody>
                 {recent.map(c => (
                   <tr key={c._id} style={{ cursor: 'pointer' }} onClick={() => navigate('/complaints')}>
-                    <td style={{ fontWeight: 500, maxWidth: 200 }}>{c.title}</td>
-                    <td style={{ color: 'var(--text-muted)', fontSize: 13 }}>{c.category}</td>
-                    <td><span className={`badge badge-${c.priority?.toLowerCase()}`}>{c.priority}</span></td>
-                    <td>{statusBadge(c.status)}</td>
-                    <td style={{ color: 'var(--text-muted)', fontSize: 13 }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td data-label="Title" style={{ fontWeight: 500, maxWidth: 200 }}>{c.title}</td>
+                    <td data-label="Category" style={{ color: 'var(--text-muted)', fontSize: 13 }}>{c.category}</td>
+                    <td data-label="Priority"><span className={`badge badge-${c.priority?.toLowerCase()}`}>{c.priority}</span></td>
+                    <td data-label="Status">{statusBadge(c.status)}</td>
+                    <td data-label="Date" style={{ color: 'var(--text-muted)', fontSize: 13 }}>{new Date(c.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

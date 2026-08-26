@@ -58,7 +58,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div className="responsive-grid-2">
             <div className="card">
               <h3 style={{ fontSize: 15, marginBottom: 16 }}>Complaints by Category</h3>
               {stats.byCategory.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No data</p> : stats.byCategory.map(item => {
