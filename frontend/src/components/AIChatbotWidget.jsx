@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box, Fab, Drawer, Typography, TextField, IconButton, Paper,
   Button, Chip, CircularProgress, Divider, Alert
@@ -32,6 +32,12 @@ const AIChatbotWidget = () => {
   ]);
   const [pendingProposal, setPendingProposal] = useState(null);
   const [contactPhone, setContactPhone] = useState('');
+  const messagesEndRef = useRef(null);
+
+  // Auto-scroll to bottom when messages or proposal card updates
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, pendingProposal]);
 
   const quickReplies = [
     { label: '🌐 Fiber Internet Down', text: 'My fiber internet is not working' },
@@ -226,7 +232,7 @@ const AIChatbotWidget = () => {
 
           {/* Interactive Card Confirmation */}
           {pendingProposal && (
-            <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '2px solid #1976d2', borderRadius: 2, overflow: 'hidden' }}>
+            <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '2px solid #1976d2', borderRadius: 2 }}>
               <Typography variant={isMobile ? "subtitle2" : "subtitle1"} color="primary" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '0.85rem', sm: '1rem' } }}>
                 📋 Confirm Automatic Ticket Registration
               </Typography>
@@ -262,6 +268,9 @@ const AIChatbotWidget = () => {
               <Typography variant="caption" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>AI Model is thinking...</Typography>
             </Box>
           )}
+
+          {/* Scroll anchor */}
+          <div ref={messagesEndRef} />
         </Box>
 
         {/* Input Bar */}
