@@ -25,7 +25,7 @@ const AIDashboardPage = () => {
     const fetchAnalytics = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/ai/analytics', {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/ai/analytics`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setData(res.data);
