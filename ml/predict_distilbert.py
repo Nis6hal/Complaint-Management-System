@@ -5,10 +5,16 @@ DistilBERT Inference Engine for Production Endpoint
 import os
 import joblib
 import numpy as np
-import torch
-import torch.nn.functional as F
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 from ml.preprocess import clean_text
+
+# torch & transformers are optional — only needed if DistilBERT model files are present
+try:
+    import torch
+    import torch.nn.functional as F
+    from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
 
 class DistilBertComplaintPredictor:
     def __init__(self, model_dir="ml/saved_models/distilbert", fallback_path="ml/saved_model.pkl"):

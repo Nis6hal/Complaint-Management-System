@@ -1,9 +1,8 @@
 fastapi
-uvicorn
+uvicorn[standard]
 scikit-learn
 numpy
 joblib
-transformers
-torch
+nltk
 pydantic
 httpx
