@@ -73,9 +73,11 @@ If you have a ticket ID, please type it in the format: **\`CMP100201\`**.`,
     }
 
     // ----------------------------------------------------
-    // PART 5: Manager AI Assistant Analytics Query
+    // PART 5: Manager AI Assistant Analytics Query (Admin Only)
     // ----------------------------------------------------
-    if (textLower.includes('major issue') || textLower.includes('today\'s issue') || textLower.includes('analytics') || textLower.includes('summary report')) {
+    const isAdminAnalyticsQuery = textLower.includes('major issue') || textLower.includes('today\'s issue') || textLower.includes('analytics') || textLower.includes('summary report');
+
+    if (isAdminAnalyticsQuery && user && user.role === 'admin') {
       const totalComplaints = await Complaint.countDocuments();
       const topCategory = await Complaint.aggregate([
         { $group: { _id: "$aiCategory", count: { $sum: 1 } } },
@@ -101,6 +103,11 @@ If you have a ticket ID, please type it in the format: **\`CMP100201\`**.`,
 • **Trend vs Yesterday**: ⬆ +8% increase in fiber loss reports due to rainfall.`,
         action: 'MANAGER_DIGEST'
       };
+    } else if (isAdminAnalyticsQuery && (!user || user.role !== 'admin')) {
+      return {
+        reply: `🔒 **Access Restricted**: Manager analytics are only available to admin users. Please contact your administrator for system-wide reports.`,
+        action: 'ACCESS_DENIED'
+      };
     }
 
     // ----------------------------------------------------
@@ -112,8 +119,8 @@ If you have a ticket ID, please type it in the format: **\`CMP100201\`**.`,
     // Attempt Groq LLM response generation with fallback to local rules
     const llmAdvice = await aiService.generateLLMTroubleshooting(text, mlPrediction.category, mlPrediction.sentiment);
     
-    // Step 2: Perform Duplicate Check against recent DB tickets
-    const recentComplaints = await Complaint.find().select('ticketId title description').sort({ createdAt: -1 }).limit(100);
+    // Step 2: Perform Duplicate Check against user's own recent DB tickets
+    const recentComplaints = await Complaint.find({ user: user._id }).select('ticketId title description').sort({ createdAt: -1 }).limit(100);
     const dupCheck = await aiService.checkDuplicate(text, recentComplaints);
 
     let duplicateNotice = "";
