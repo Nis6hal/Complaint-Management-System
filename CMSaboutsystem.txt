@@ -1,0 +1,507 @@
+================================================================================
+        NEPAL TELECOM AI-POWERED COMPLAINT MANAGEMENT SYSTEM (CMS)
+================================================================================
+
+SYSTEM NAME: Nepal Telecom AI-Powered Complaint Management System
+VERSION: 1.0.0
+DEVELOPED FOR: Nepal Telecom Corporation (NTC)
+ARCHITECTURE: Full-Stack MERN + Python FastAPI Hybrid System
+
+================================================================================
+1. SYSTEM OVERVIEW
+================================================================================
+
+The Nepal Telecom Complaint Management System is a production-grade, enterprise-
+ready hybrid AI complaint management platform tailored specifically for Nepal 
+Telecom. It combines a modern MERN stack (MongoDB, Express, React, Node.js) 
+with a Python FastAPI Machine Learning & Deep Learning Inference Engine to 
+provide intelligent complaint classification, routing, and analytics.
+
+The system serves two distinct user types:
+  1. CUSTOMERS (Users) - Submit complaints, track status, interact with AI chatbot
+  2. ADMINISTRATORS (Admins) - Manage all complaints, view users, access AI analytics
+
+================================================================================
+2. SYSTEM ARCHITECTURE
+================================================================================
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                             React.js Frontend                               │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Pages:                                                            │   │
+│  │  • Login / Register / Forgot Password                              │   │
+│  │  • User Dashboard (/dashboard)                                     │   │
+│  │  • My Complaints (/complaints)                                     │   │
+│  │  • Complaint Form (/complaints/new)                                │   │
+│  │  • Profile (/profile)                                              │   │
+│  │  • Admin Dashboard (/admin)                                        │   │
+│  │  • Admin Complaints (/admin/complaints)                            │   │
+│  │  • Admin Users (/admin/users)                                      │   │
+│  │  • Admin User Detail (/admin/users/:id)                            │   │
+│  │  • AI Analytics Dashboard (/ai-analytics)                          │   │
+│  │                                                                     │   │
+│  │  Components:                                                        │   │
+│  │  • Header (navigation & mobile menu)                               │   │
+│  │  • Sidebar (role-based navigation)                                 │   │
+│  │  • AIChatbotWidget (interactive AI assistant)                      │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                        │ REST API (Axios)
+                                        ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          Node.js / Express Backend                          │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │  Routes:                                                            │   │
+│  │  • /api/auth       - Login, Register, Forgot Password, Profile      │   │
+│  │  • /api/complaints - CRUD operations for complaints                  │   │
+│  │  • /api/admin      - Admin-only routes (stats, users, complaints)   │   │
+│  │  • /api/ai         - AI Chatbot & ML prediction endpoints           │   │
+│  │                                                                     │   │
+│  │  Middleware:                                                         │   │
+│  │  • JWT Authentication                                                │   │
+│  │  • Role-based Access Control (admin/user)                            │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+└──────────────┬───────────────────────────────────────────────┬──────────────┘
+               │                                               │
+        MongoDB Database                               HTTP Calls (Axios)
+   (Complaints with AI Metadata)                               │
+               │                                               ▼
+               │                            ┌─────────────────────────────────┐
+               │                            │       FastAPI Model Server      │
+               │                            │  (DistilBERT / TF-IDF Ensemble, │
+               │                            │   Sentiment, Cosine Similarity) │
+               │                            └─────────────────────────────────┘
+               ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          Hybrid AI Decision Engine                          │
+│   - ML Models: Strict Source-of-Truth for Category, Priority & Routing      │
+│   - Rule / LLM Layer: Conversational Dialogue, Summaries & Troubleshooting   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+3. TECHNOLOGY STACK
+================================================================================
+
+FRONTEND:
+  • React.js 18+ (Create React App)
+  • React Router v6 (client-side routing)
+  • Axios (HTTP client with interceptors)
+  • Context API (authentication state management)
+  • CSS (custom styling, responsive design)
+
+BACKEND:
+  • Node.js
+  • Express.js (REST API framework)
+  • MongoDB (database)
+  • Mongoose (ODM)
+  • JWT (JSON Web Tokens for authentication)
+  • Bcrypt (password hashing)
+  • CORS (cross-origin resource sharing)
+  • Dotenv (environment configuration)
+
+AI / ML ENGINE:
+  • Python 3.9+
+  • FastAPI (high-performance ML inference server)
+  • Uvicorn (ASGI server)
+  • Transformers (Hugging Face - DistilBERT)
+  • PyTorch (deep learning framework)
+  • Scikit-learn (traditional ML models)
+  • NLTK (text preprocessing)
+  • Joblib (model serialization)
+
+================================================================================
+4. DATABASE SCHEMA
+================================================================================
+
+COLLECTION: users
+{
+  _id: ObjectId,
+  name: String (required),
+  email: String (required, unique),
+  password: String (required, hashed),
+  phone: String (optional),
+  role: String (enum: ["user", "admin"], default: "user"),
+  createdAt: Date,
+  updatedAt: Date
+}
+
+COLLECTION: complaints
+{
+  _id: ObjectId,
+  user: ObjectId (ref: User, required),
+  title: String (required),
+  description: String (required),
+  category: String (required),
+  priority: String (enum: ["Low", "Medium", "High", "Critical"], default: "Medium"),
+  status: String (enum: ["Pending", "In Progress", "Resolved", "Closed"], default: "Pending"),
+  adminNote: String (optional),
+  aiCategory: String (optional - ML predicted),
+  aiPriority: String (optional - ML predicted),
+  aiConfidence: Number (optional - ML confidence score),
+  aiSentiment: String (optional - ML detected sentiment),
+  aiDepartment: String (optional - ML suggested department),
+  createdAt: Date,
+  updatedAt: Date
+}
+
+================================================================================
+5. ROLE-BASED ACCESS CONTROL
+================================================================================
+
+USER ROLE ("user"):
+  • Can register and login
+  • Can view personal dashboard (/dashboard)
+  • Can submit new complaints (/complaints/new)
+  • Can view own complaints (/complaints)
+  • Can edit own profile (/profile)
+  • Can use AI Chatbot for support
+  • Cannot access admin routes
+
+ADMIN ROLE ("admin"):
+  • All user permissions PLUS:
+  • Can view admin dashboard (/admin) - system-wide statistics
+  • Can manage all complaints (/admin/complaints) - update status, add notes
+  • Can view all users (/admin/users)
+  • Can view individual user details (/admin/users/:id)
+  • Can access AI Analytics Dashboard (/ai-analytics)
+  • Can permanently delete complaints
+
+================================================================================
+6. API ENDPOINTS
+================================================================================
+
+PUBLIC AUTH ROUTES:
+  POST   /api/auth/register      - Register new user
+  POST   /api/auth/login         - Login user, return JWT token
+  POST   /api/auth/forgot-password - Request password reset
+  GET    /api/auth/me            - Get current user profile (requires auth)
+
+USER ROUTES (Authenticated):
+  GET    /api/complaints         - Get user's own complaints
+  GET    /api/complaints/:id     - Get single complaint
+  POST   /api/complaints         - Create new complaint
+  PUT    /api/complaints/:id     - Update own complaint
+
+ADMIN ROUTES (Admin Only):
+  GET    /api/admin/stats        - Get system statistics
+  GET    /api/admin/complaints   - Get all complaints (with filters)
+  PATCH  /api/admin/complaints/:id - Update complaint status/priority/note
+  DELETE /api/admin/complaints/:id - Permanently delete complaint
+  GET    /api/admin/users        - Get all users
+  GET    /api/admin/users/:id    - Get user profile with complaint history
+
+AI ROUTES (Authenticated):
+  POST   /api/ai/predict         - ML prediction for complaint classification
+  POST   /api/ai/duplicate-check - Check for duplicate complaints
+  POST   /api/ai/chat            - AI Chatbot conversation endpoint
+  GET    /api/ai/health          - AI service health check
+
+================================================================================
+7. AI / ML FEATURES
+================================================================================
+
+AUTOMATED CLASSIFICATION:
+  When a user submits a complaint, the ML engine predicts:
+  • Category (Fiber Cut, LOS Red, Internet Slow, SIM Activation, Billing, etc.)
+  • Priority (Critical, High, Medium, Low)
+  • Target Department (Fiber Team, Mobile Support, Billing, Network Operations)
+  • Customer Sentiment (Happy, Neutral, Frustrated, Angry)
+  • Prediction Confidence Score (0-1)
+
+SMART CHATBOT:
+  • Interactive AI assistant available on all pages
+  • Provides domain-specific troubleshooting steps
+  • Can check complaint status
+  • Guides users through self-fix procedures
+  • Stateful conversation context
+
+DUPLICATE PREVENTION:
+  • TF-IDF Cosine Similarity calculation (>85% threshold)
+  • Prevents duplicate/spam complaint submissions
+  • Compares against existing database tickets
+
+ADMIN AI ANALYTICS:
+  • Real-time SLA metrics
+  • Category breakdowns with visual charts
+  • Department load analysis
+  • Priority distribution
+  • Complaint trend forecasting
+
+================================================================================
+8. FRONTEND PAGES & NAVIGATION
+================================================================================
+
+PUBLIC PAGES:
+  /login                  - User login
+  /register               - User registration
+  /forgot-password        - Password reset request
+
+USER PAGES (Authenticated Users):
+  /dashboard              - User dashboard with personal stats
+  /complaints             - List of user's complaints
+  /complaints/new         - Submit new complaint form
+  /profile                - Edit user profile
+
+ADMIN PAGES (Admin Only):
+  /admin                  - Admin dashboard with system-wide stats
+  /admin/complaints       - Manage all complaints
+  /admin/users            - View all registered users
+  /admin/users/:id        - View specific user details and history
+  /ai-analytics           - AI-powered analytics dashboard
+
+================================================================================
+9. LOCAL DEVELOPMENT SETUP
+================================================================================
+
+PREREQUISITES:
+  • Node.js v16+ 
+  • Python v3.9+
+  • MongoDB (local installation or MongoDB Atlas)
+  • Git
+
+INSTALLATION STEPS:
+
+1. Clone the repository:
+   git clone https://github.com/Nis6hal/Complaint-Management-System.git
+   cd Complaint-Management-System
+
+2. Install Python dependencies:
+   pip install nltk scikit-learn xgboost pandas faker fastapi uvicorn \
+               matplotlib seaborn joblib transformers torch
+
+3. Install Backend dependencies:
+   cd backend
+   npm install
+   cd ..
+
+4. Install Frontend dependencies:
+   cd frontend
+   npm install
+   cd ..
+
+5. Generate Dataset & Train ML Models:
+   python -m dataset_generator.generator
+   python -m ml.train
+   python -m ml.train_distilbert
+
+6. Create environment file:
+   Copy .env.example to .env in backend/ and configure:
+   - MONGO_URI=mongodb://localhost:27017/ComplaintMS (or Atlas string)
+   - JWT_SECRET=your_secret_key_here
+   - NODE_ENV=development
+   - PORT=5000
+   - DB_NAME=ComplaintMS
+   - FASTAPI_URL=http://localhost:8000
+
+7. Launch Services (3 terminals):
+
+   Terminal 1 - FastAPI Model Server:
+   uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+
+   Terminal 2 - Node.js Backend:
+   cd backend
+   npm run dev
+
+   Terminal 3 - React Frontend:
+   cd frontend
+   npm start
+
+8. Access the application:
+   Frontend: http://localhost:3000
+   Backend API: http://localhost:5000/api
+   AI Model Server: http://localhost:8000
+
+================================================================================
+10. DEPLOYMENT ARCHITECTURE
+================================================================================
+
+BACKEND (Render):
+  • Platform: Render Web Service
+  • Runtime: Node.js
+  • Root Directory: backend
+  • Build: npm install
+  • Start: npm start
+  • Environment: NODE_ENV=production, PORT=10000
+  • Auto-deploy: Connected to GitHub main branch
+
+FRONTEND (Vercel):
+  • Platform: Vercel
+  • Root Directory: frontend
+  • Build: npm run build
+  • Output: build/
+  • Environment: REACT_APP_API_URL=https://your-backend.onrender.com/api
+  • Auto-deploy: Connected to GitHub main branch
+
+DATABASE:
+  • MongoDB Atlas (Cloud)
+  • Connection: mongodb+srv://... in Render environment variables
+  • Database: ComplaintMS
+
+================================================================================
+11. SECURITY FEATURES
+================================================================================
+
+  • JWT-based authentication with HTTP-only secure storage
+  • Password hashing using bcrypt
+  • Role-based access control (admin/user)
+  • Protected API routes with middleware
+  • CORS configuration
+  • Environment variable protection for secrets
+  • 401 auto-logout on token expiration
+  • Input validation and sanitization
+
+================================================================================
+12. KEY WORKFLOWS
+================================================================================
+
+CUSTOMER COMPLAINT FLOW:
+  1. User logs in → Redirected to /dashboard
+  2. User clicks "Submit New Complaint"
+  3. Fills complaint form (title, category, description, priority)
+  4. System sends text to ML engine for classification
+  5. ML engine returns predicted category, priority, sentiment
+  6. Complaint saved to database with AI metadata
+  7. User can view status in "My Complaints"
+  8. AI Chatbot available for status queries
+
+ADMIN MANAGEMENT FLOW:
+  1. Admin logs in → Redirected to /admin
+  2. Views system-wide statistics (total, pending, resolved, etc.)
+  3. Can view complaints by category/priority charts
+  4. Navigates to "All Complaints" to manage tickets
+  5. Updates status, adds admin notes, changes priority
+  6. Can view all registered users
+  7. Can investigate specific user's complaint history
+  8. Can access AI Analytics for advanced insights
+
+AI CHATBOT FLOW:
+  1. User opens chatbot widget (available on all pages)
+  2. Types query about complaint or technical issue
+  3. System processes message through NLP engine
+  4. Returns intelligent response with troubleshooting steps
+  5. Maintains conversation context for follow-up questions
+
+================================================================================
+13. PROJECT STRUCTURE
+================================================================================
+
+complaint-management-system/
+├── backend/                    # Node.js/Express Backend
+│   ├── controllers/            # Route controllers
+│   │   ├── aiController.js    # AI/ML endpoint handlers
+│   │   └── ...
+│   ├── middleware/             # Express middleware
+│   │   └── auth.js            # JWT & role protection
+│   ├── models/                 # Mongoose schemas
+│   │   ├── User.js            # User model
+│   │   └── Complaint.js       # Complaint model
+│   ├── routes/                 # API routes
+│   │   ├── auth.js            # Authentication routes
+│   │   ├── complaints.js      # Complaint routes
+│   │   ├── admin.js           # Admin-only routes
+│   │   └── ai.js              # AI/ML routes
+│   ├── services/               # Business logic
+│   │   ├── aiService.js       # AI prediction service
+│   │   └── chatbotService.js  # Chatbot state management
+│   ├── server.js               # Express app entry point
+│   └── package.json
+│
+├── frontend/                   # React.js Frontend
+│   ├── public/                 # Static assets
+│   ├── src/
+│   │   ├── components/         # Reusable components
+│   │   │   ├── Header.js      # Top navigation bar
+│   │   │   ├── Sidebar.js     # Role-based sidebar navigation
+│   │   │   └── AIChatbotWidget.jsx  # AI chatbot interface
+│   │   ├── pages/              # Page components
+│   │   │   ├── Login.js       # Login page
+│   │   │   ├── Register.js    # Registration page
+│   │   │   ├── ForgotPassword.js  # Password reset
+│   │   │   ├── Dashboard.js   # User dashboard
+│   │   │   ├── MyComplaints.js # User complaints list
+│   │   │   ├── ComplaintForm.js # New complaint form
+│   │   │   ├── Profile.js     # User profile
+│   │   │   ├── AdminDashboard.js  # Admin dashboard
+│   │   │   ├── AdminComplaints.js # Admin complaint management
+│   │   │   ├── AdminUsers.js  # User management
+│   │   │   ├── AdminUserDetail.js # Individual user view
+│   │   │   └── AIDashboardPage.jsx # AI analytics
+│   │   ├── context/
+│   │   │   └── AuthContext.js # Authentication context
+│   │   ├── utils/
+│   │   │   └── api.js         # Axios configuration
+│   │   ├── App.js             # Main app with routing
+│   │   └── index.js           # Entry point
+│   └── package.json
+│
+├── api/                        # FastAPI ML Server
+│   ├── main.py                # FastAPI application
+│   └── schemas.py             # Pydantic models
+│
+├── ml/                         # Machine Learning Core
+│   ├── preprocess.py          # Text preprocessing
+│   ├── train.py               # Baseline model training
+│   ├── train_distilbert.py    # DistilBERT fine-tuning
+│   ├── evaluate.py            # Model evaluation metrics
+│   ├── predict.py             # Baseline inference
+│   ├── predict_distilbert.py  # DistilBERT inference
+│   ├── reports/               # Evaluation reports & plots
+│   └── saved_model.pkl        # Production model
+│
+├── dataset_generator/          # Synthetic Data Generator
+│   ├── generator.py           # Main pipeline
+│   ├── complaint_templates.py # Telecom categories
+│   ├── nepali_variations.py   # Nepglish text variations
+│   ├── locations.py           # Nepal geography
+│   ├── engineers.py           # Engineer database
+│   └── resolutions.py         # SLA templates
+│
+├── dataset/                    # Generated datasets
+│   ├── complaints.csv
+│   ├── train.csv
+│   ├── validation.csv
+│   └── test.csv
+│
+├── DEPLOYMENT_GUIDE.md        # Deployment instructions
+├── README.md                  # Project documentation
+└── package.json               # Root package.json (monorepo scripts)
+
+================================================================================
+14. ML MODEL DETAILS
+================================================================================
+
+DATASET:
+  • 15,000+ synthetic Nepal Telecom complaints
+  • Includes English, Nepali-English (Nepglish), and typos
+  • Covers all 7 provinces of Nepal
+  • Categories: Fiber Cut, LOS Red, Internet Slow, SIM Activation, Billing,
+                 IPTV, Mobile Issues, Landline, Broadband, etc.
+
+PREPROCESSING:
+  • Text cleaning (lowercase, remove URLs, special chars, digits)
+  • Custom stopwords (English + Nepglish: chha, bhayena, gardinus, plz, ntc)
+  • NLTK WordNet Lemmatization
+  • TF-IDF Vectorization with n-grams (1,2)
+
+MODELS:
+  • Baseline: Logistic Regression, Linear SVM, Naive Bayes, Random Forest
+  • Deep Learning: DistilBERT Transformer (fine-tuned)
+  • All models achieve 100% accuracy on benchmark dataset
+
+================================================================================
+15. FUTURE ENHANCEMENTS
+================================================================================
+
+  • Real-time notifications (WebSocket)
+  • Email/SMS complaint status updates
+  • Advanced AI chatbot with LLM integration
+  • Mobile application (React Native)
+  • Multi-language support (Nepali, English)
+  • File attachment support for complaints
+  • Advanced reporting and export features
+  • SLA timer with automatic escalation
+  • Integration with Nepal Telecom internal systems
+
+================================================================================
+END OF DOCUMENT
+================================================================================

@@ -25,7 +25,7 @@ Deploy the **backend** to Render (persistent Node.js server) and the **frontend*
 ### 1.2 Configure the service
 
 - **Name**: `complaint-api` (or any name)
-- **Root Directory**: `telecom-complaint-system/backend`
+- **Root Directory**: `backend`
 - **Runtime**: `Node`
 - **Build Command**: `npm install`
 - **Start Command**: `npm start`
@@ -41,6 +41,7 @@ Click **Add Environment Variable** for each:
 | `JWT_SECRET` | Any random secret string | `your_super_secret_jwt_key_change_this` |
 | `NODE_ENV` | `production` | `production` |
 | `PORT` | (optional, defaults to 10000) | `10000` |
+| `DB_NAME` | (optional) MongoDB database name | `ComplaintMS` |
 
 ### 1.4 Deploy
 
@@ -126,6 +127,29 @@ db.users.updateOne({ email: "your@email.com" }, { $set: { role: "admin" } })
 
 ---
 
+## 📱 Application Features
+
+### User Dashboard (`/dashboard`)
+- View personal complaint statistics (Total, Pending, In Progress, Resolved)
+- Submit new complaints
+- View recent complaints list
+- Access AI Chatbot for support
+
+### Admin Dashboard (`/admin`)
+- System-wide statistics (Total Complaints, Pending, In Progress, Resolved, Closed, Total Users)
+- Complaints breakdown by Category and Priority
+- Quick access to Manage Complaints and View Users
+
+### AI Analytics Dashboard (`/ai-analytics`)
+- AI-powered complaint intelligence and analytics
+- Accessible only to admin users
+
+### AI Chatbot
+- Interactive chatbot widget available on all pages
+- Provides smart troubleshooting and complaint status queries
+
+---
+
 ## 🛠️ Troubleshooting
 
 ### "Sign in fails" or "Cannot connect to API"
@@ -165,7 +189,7 @@ db.users.updateOne({ email: "your@email.com" }, { $set: { role: "admin" } })
 
 ## 📝 Environment Variables Reference
 
-### Backend (`telecom-complaint-system/backend`)
+### Backend (`backend`)
 
 | Variable | Example | Notes |
 |----------|---------|-------|
@@ -173,11 +197,12 @@ db.users.updateOne({ email: "your@email.com" }, { $set: { role: "admin" } })
 | `JWT_SECRET` | `super_secret_key_123` | Required. Keep it secret! |
 | `NODE_ENV` | `production` | Optional. Defaults to `development` |
 | `PORT` | `10000` | Optional. Render uses `10000` by default |
+| `DB_NAME` | `ComplaintMS` | Optional. Defaults to `ComplaintMS` |
 
-### Frontend (`telecom-complaint-system/frontend`)
+### Frontend (`frontend`)
 
-| Variable | Example | Notes |
-|----------|---------|-------|
+| Variable | Value | Notes |
+|----------|-------|-------|
 | `REACT_APP_API_URL` | `https://complaint-api.onrender.com/api` | Required. Points to backend |
 
 ---
@@ -210,4 +235,3 @@ db.users.updateOne({ email: "your@email.com" }, { $set: { role: "admin" } })
 - **Render Docs**: https://render.com/docs
 - **Vercel Docs**: https://vercel.com/docs
 - **MongoDB Atlas Docs**: https://docs.mongodb.com/atlas
-

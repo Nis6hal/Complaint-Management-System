@@ -118,7 +118,8 @@ const AIChatbotWidget = () => {
           bottom: 24,
           right: 24,
           boxShadow: '0 8px 24px rgba(25, 118, 210, 0.4)',
-          background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)'
+          background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
+          display: { xs: open ? 'none' : 'flex', sm: 'flex' }
         }}
       >
         <SmartToyIcon fontSize="large" />
@@ -130,7 +131,15 @@ const AIChatbotWidget = () => {
         open={open}
         onClose={() => setOpen(false)}
         PaperProps={{
-          sx: { width: { xs: '100%', sm: 420 }, p: 0, display: 'flex', flexDirection: 'column' }
+          sx: {
+            width: { xs: '100%', sm: 420 },
+            height: { xs: '100%', sm: '100%' },
+            p: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            boxSizing: 'border-box'
+          }
         }}
       >
         {/* Header */}
@@ -173,7 +182,9 @@ const AIChatbotWidget = () => {
                 backgroundColor: m.sender === 'user' ? '#1976d2' : '#ffffff',
                 color: m.sender === 'user' ? '#ffffff' : '#1a1a1a',
                 boxShadow: m.sender === 'bot' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
-                whiteSpace: 'pre-line'
+                whiteSpace: 'pre-line',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word'
               }}
             >
               <Typography variant="body2">{m.text}</Typography>
@@ -221,7 +232,7 @@ const AIChatbotWidget = () => {
         </Box>
 
         {/* Input Bar */}
-        <Box sx={{ p: 1.5, backgroundColor: '#fff', borderTop: '1px solid #e0e0e0', display: 'flex', gap: 1 }}>
+        <Box sx={{ p: 1.5, backgroundColor: '#fff', borderTop: '1px solid #e0e0e0', display: 'flex', gap: 1, pb: { xs: 2, sm: 1.5 } }}>
           <TextField
             fullWidth
             size="small"
