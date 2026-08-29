@@ -40,7 +40,7 @@ export default function Sidebar({ menuOpen, onMenuClose }) {
   const navItems =
     user.role === "admin"
       ? AdminNav
-      : [...UserNav, { label: "Profile", icon: "👤", path: "/profile" }];
+      : UserNav;
   const initials = user.name
     ? user.name
         .split(" ")
@@ -87,13 +87,6 @@ export default function Sidebar({ menuOpen, onMenuClose }) {
               <small>{user.role}</small>
             </div>
           </div>
-          <button
-            className="nav-item"
-            onClick={logout}
-            style={{ color: "#f87171", marginTop: 4 }}
-          >
-            <span className="nav-icon">🚪</span> Logout
-          </button>
         </div>
       </aside>
     </>
