@@ -3,6 +3,7 @@ import {
   Box, Fab, Drawer, Typography, TextField, IconButton, Paper,
   Button, Chip, CircularProgress, Divider, Alert
 } from '@mui/material';
+import { useTheme, useMediaQuery } from '@mui/material';
 const SmartToyIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 9V7c0-1.1-.9-2-2-2h-3c0-1.66-1.34-3-3-3S9 3.34 9 5H6c-1.1 0-2 .9-2 2v2c-1.66 0-3 1.34-3 3s1.34 3 3 3v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-4c1.66 0 3-1.34 3-3s-1.34-3-3-3zm-2 10H6V7h12v12zm-9-6c-.83 0-1.5-.67-1.5-1.5S8.17 10 9 10s1.5.67 1.5 1.5S9.83 13 9 13zm6 0c-.83 0-1.5-.67-1.5-1.5S14.17 10 15 10s1.5.67 1.5 1.5S15.83 13 15 13zm-6 3h6v1.5H9V16z"/></svg>
 );
@@ -18,6 +19,8 @@ const CheckCircleIcon = () => (
 import axios from 'axios';
 
 const AIChatbotWidget = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -115,14 +118,16 @@ const AIChatbotWidget = () => {
         onClick={() => setOpen(true)}
         sx={{
           position: 'fixed',
-          bottom: 24,
-          right: 24,
+          bottom: { xs: 12, sm: 24 },
+          right: { xs: 12, sm: 24 },
+          width: { xs: 44, sm: 56 },
+          height: { xs: 44, sm: 56 },
           boxShadow: '0 8px 24px rgba(25, 118, 210, 0.4)',
           background: 'linear-gradient(135deg, #0052D4 0%, #4364F7 50%, #6FB1FC 100%)',
           display: { xs: open ? 'none' : 'flex', sm: 'flex' }
         }}
       >
-        <SmartToyIcon fontSize="large" />
+        <SmartToyIcon />
       </Fab>
 
       {/* Slide-out Drawer Widget */}
@@ -143,18 +148,18 @@ const AIChatbotWidget = () => {
         }}
       >
         {/* Header */}
-        <Box sx={{ p: 2, backgroundColor: '#0052D4', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box sx={{ p: { xs: 1.5, sm: 2 }, backgroundColor: '#0052D4', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
             <SmartToyIcon />
-            <Typography variant="h6" fontWeight="bold">NTC AI Assistant</Typography>
+            <Typography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold">NTC AI Assistant</Typography>
           </Box>
-          <IconButton color="inherit" onClick={() => setOpen(false)}>
+          <IconButton color="inherit" onClick={() => setOpen(false)} size={isMobile ? "small" : "medium"}>
             <CloseIcon />
           </IconButton>
         </Box>
 
         {/* Quick Suggestion Chips */}
-        <Box sx={{ p: 1, backgroundColor: '#eef2f6', display: 'flex', gap: 0.8, overflowX: 'auto', flexWrap: 'nowrap' }}>
+        <Box sx={{ p: { xs: 0.5, sm: 1 }, backgroundColor: '#eef2f6', display: 'flex', gap: 0.5, overflowX: 'auto', flexWrap: 'nowrap' }}>
           {quickReplies.map((qr, idx) => (
             <Chip
               key={idx}
@@ -164,42 +169,42 @@ const AIChatbotWidget = () => {
               clickable
               color="primary"
               variant="outlined"
-              sx={{ backgroundColor: '#fff', fontSize: '0.75rem', whitespace: 'nowrap' }}
+              sx={{ backgroundColor: '#fff', fontSize: { xs: '0.7rem', sm: '0.75rem' }, whitespace: 'nowrap' }}
             />
           ))}
         </Box>
 
         {/* Message Log */}
-        <Box sx={{ flex: 1, p: 2, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2, backgroundColor: '#f8f9fa' }}>
+        <Box sx={{ flex: 1, p: { xs: 1, sm: 2 }, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 2 }, backgroundColor: '#f8f9fa' }}>
           {messages.map((m, idx) => (
             <Box
               key={idx}
               sx={{
                 alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start',
-                maxWidth: '85%',
-                p: 1.8,
-                borderRadius: m.sender === 'user' ? '18px 18px 2px 18px' : '18px 18px 18px 2px',
+                maxWidth: { xs: '92%', sm: '85%' },
+                p: { xs: 1.2, sm: 1.8 },
+                borderRadius: m.sender === 'user' ? '16px 16px 2px 16px' : '16px 16px 16px 2px',
                 backgroundColor: m.sender === 'user' ? '#1976d2' : '#ffffff',
                 color: m.sender === 'user' ? '#ffffff' : '#1a1a1a',
-                boxShadow: m.sender === 'bot' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
+                boxShadow: m.sender === 'bot' ? '0 1px 4px rgba(0,0,0,0.04)' : 'none',
                 whiteSpace: 'pre-line',
                 wordBreak: 'break-word',
                 overflowWrap: 'break-word'
               }}
             >
-              <Typography variant="body2">{m.text}</Typography>
+              <Typography variant={isMobile ? "caption" : "body2"} sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>{m.text}</Typography>
             </Box>
           ))}
 
           {/* Interactive Card Confirmation */}
           {pendingProposal && (
-            <Paper elevation={3} sx={{ p: 2, border: '2px solid #1976d2', borderRadius: 2 }}>
-              <Typography variant="subtitle2" color="primary" fontWeight="bold" gutterBottom>
+            <Paper elevation={3} sx={{ p: { xs: 1.5, sm: 2 }, border: '2px solid #1976d2', borderRadius: 2, overflow: 'hidden' }}>
+              <Typography variant={isMobile ? "subtitle2" : "subtitle1"} color="primary" fontWeight="bold" gutterBottom sx={{ fontSize: { xs: '0.85rem', sm: '1rem' } }}>
                 📋 Confirm Automatic Ticket Registration
               </Typography>
-              <Typography variant="caption" display="block"><b>Category:</b> {pendingProposal.category}</Typography>
-              <Typography variant="caption" display="block"><b>Priority:</b> {pendingProposal.priority}</Typography>
-              <Typography variant="caption" display="block"><b>Department:</b> {pendingProposal.department}</Typography>
+              <Typography variant="caption" display="block" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}><b>Category:</b> {pendingProposal.category}</Typography>
+              <Typography variant="caption" display="block" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}><b>Priority:</b> {pendingProposal.priority}</Typography>
+              <Typography variant="caption" display="block" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}><b>Department:</b> {pendingProposal.department}</Typography>
               
               <TextField
                 size="small"
@@ -207,12 +212,12 @@ const AIChatbotWidget = () => {
                 placeholder="Enter Phone Number"
                 value={contactPhone}
                 onChange={(e) => setContactPhone(e.target.value)}
-                sx={{ mt: 1.5, mb: 1.5 }}
+                sx={{ mt: { xs: 1, sm: 1.5 }, mb: { xs: 1, sm: 1.5 } }}
               />
 
               <Button
                 variant="contained"
-                size="small"
+                size={isMobile ? "medium" : "small"}
                 fullWidth
                 startIcon={<CheckCircleIcon />}
                 onClick={handleConfirmTicket}
@@ -225,14 +230,14 @@ const AIChatbotWidget = () => {
 
           {loading && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'text.secondary' }}>
-              <CircularProgress size={16} />
-              <Typography variant="caption">AI Model is thinking...</Typography>
+              <CircularProgress size={isMobile ? 14 : 16} />
+              <Typography variant="caption" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>AI Model is thinking...</Typography>
             </Box>
           )}
         </Box>
 
         {/* Input Bar */}
-        <Box sx={{ p: 1.5, backgroundColor: '#fff', borderTop: '1px solid #e0e0e0', display: 'flex', gap: 1, pb: { xs: 2, sm: 1.5 } }}>
+        <Box sx={{ p: { xs: 1, sm: 1.5 }, backgroundColor: '#fff', borderTop: '1px solid #e0e0e0', display: 'flex', gap: 1, pb: { xs: 2, sm: 1.5 } }}>
           <TextField
             fullWidth
             size="small"
@@ -241,7 +246,7 @@ const AIChatbotWidget = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
           />
-          <IconButton color="primary" onClick={handleSend} disabled={loading}>
+          <IconButton color="primary" onClick={handleSend} disabled={loading} size={isMobile ? "medium" : "small"}>
             <SendIcon />
           </IconButton>
         </Box>
