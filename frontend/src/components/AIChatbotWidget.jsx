@@ -42,7 +42,6 @@ const AIChatbotWidget = () => {
   const quickReplies = [
     { label: '🌐 Fiber Internet Down', text: 'My fiber internet is not working' },
     { label: '🔴 LOS Red Light', text: 'My router has a red blinking LOS light' },
-    { label: '📱 SIM / VoLTE Issue', text: 'Call and SMS not working on SIM' },
     { label: '📋 Check Ticket Status', text: 'Check my complaint ticket status' }
   ];
 
