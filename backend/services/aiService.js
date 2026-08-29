@@ -8,9 +8,11 @@ const FASTAPI_BASE_URL = process.env.FASTAPI_URL || 'http://127.0.0.1:8000';
 
 class AIService {
   /**
-   * Predict complaint category, priority, department, confidence & sentiment from ML FastAPI model.
+   * Predict complaint category, priority, department, confidence & sentiment.
+   * Tries FastAPI first, then falls back to Groq classification, then hardcoded defaults.
    */
   async predictComplaint(complaintText) {
+    // Source 1: FastAPI ML server
     try {
       const response = await axios.post(`${FASTAPI_BASE_URL}/predict`, {
         complaint: complaintText
@@ -18,21 +20,107 @@ class AIService {
       return response.data;
     } catch (err) {
       console.error('FastAPI Prediction call error:', err.message);
+    }
+
+    // Source 2: Groq LLM classification fallback
+    try {
+      const groqResult = await this.predictComplaintViaGroq(complaintText);
+      if (groqResult) {
+        console.log('Groq classification fallback used for:', complaintText.substring(0, 50));
+        return groqResult;
+      }
+    } catch (err) {
+      console.error('Groq classification fallback error:', err.message);
+    }
+
+    // Source 3: Hardcoded defaults
+    return {
+      category: 'Internet Down',
+      priority: 'High',
+      department: 'Internet Support',
+      confidence: 0.85,
+      sentiment: 'Frustrated',
+      aiSummary: `Possible network issue: ${complaintText.substring(0, 50)}...`
+    };
+  }
+
+  /**
+   * Fallback classification using Groq when FastAPI is unavailable.
+   */
+  async predictComplaintViaGroq(complaintText) {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey) return null;
+
+    const prompt = `Classify this Nepal Telecom customer complaint. Respond with ONLY valid JSON, no markdown, no explanation:
+
+{
+  "category": "Fiber Cut | LOS Red | Internet Slow | SIM Activation | Billing | IPTV | Mobile Issue | Landline | Broadband | Other",
+  "priority": "Low | Medium | High | Critical",
+  "department": "Fiber Team | Mobile Support | Billing | Network Operations | Customer Support",
+  "sentiment": "Happy | Neutral | Frustrated | Angry",
+  "confidence": 0.95,
+  "aiSummary": "one line summary"
+}
+
+Complaint: "${complaintText}"`;
+
+    try {
+      const response = await axios.post(
+        'https://api.groq.com/openai/v1/chat/completions',
+        {
+          model: 'openai/gpt-oss-20b',
+          messages: [
+            { role: 'user', content: prompt }
+          ],
+          max_tokens: 200,
+          temperature: 0.1
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 5000
+        }
+      );
+
+      const content = response.data?.choices?.[0]?.message?.content?.trim();
+      if (!content) return null;
+
+      let parsed;
+      try {
+        parsed = JSON.parse(content);
+      } catch {
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsed = JSON.parse(jsonMatch[0]);
+        } else {
+          return null;
+        }
+      }
+
+      if (!parsed.category || !parsed.priority || !parsed.department) return null;
+
       return {
-        category: 'Internet Down',
-        priority: 'High',
-        department: 'Internet Support',
-        confidence: 0.85,
-        sentiment: 'Frustrated',
-        aiSummary: `Possible network issue: ${complaintText.substring(0, 50)}...`
+        category: parsed.category,
+        priority: parsed.priority,
+        department: parsed.department,
+        confidence: typeof parsed.confidence === 'number' ? parsed.confidence : 0.85,
+        sentiment: parsed.sentiment || 'Neutral',
+        aiSummary: parsed.aiSummary || complaintText.substring(0, 50)
       };
+    } catch (err) {
+      console.error('Groq classification error:', err.message);
+      return null;
     }
   }
 
   /**
    * Check duplicate similarity against existing DB complaints using TF-IDF Cosine Similarity in FastAPI.
+   * Falls back to simple keyword overlap if FastAPI is unavailable.
    */
   async checkDuplicate(newComplaintText, existingComplaints) {
+    // Source 1: FastAPI duplicate check
     try {
       const response = await axios.post(`${FASTAPI_BASE_URL}/duplicate-check`, {
         newComplaint: newComplaintText,
@@ -44,8 +132,33 @@ class AIService {
       return response.data;
     } catch (err) {
       console.error('FastAPI Duplicate Check error:', err.message);
-      return { isDuplicate: false, similarityScore: 0.0 };
     }
+
+    // Source 2: Simple keyword overlap fallback
+    const newWords = new Set(newComplaintText.toLowerCase().split(/\s+/));
+    let bestMatch = null;
+    let bestScore = 0;
+
+    for (const complaint of existingComplaints) {
+      const existingText = `${complaint.title || ''} ${complaint.description || ''}`.toLowerCase();
+      const existingWords = new Set(existingText.split(/\s+/));
+      let overlap = 0;
+      for (const word of newWords) {
+        if (existingWords.has(word)) overlap++;
+      }
+      const score = newWords.size > 0 ? overlap / newWords.size : 0;
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = complaint;
+      }
+    }
+
+    const isDuplicate = bestScore > 0.6;
+    return {
+      isDuplicate,
+      similarityScore: bestScore,
+      matchedTicketId: isDuplicate ? (bestMatch?.ticketId || bestMatch?._id?.toString()) : null
+    };
   }
 
   /**
