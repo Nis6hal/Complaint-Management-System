@@ -56,7 +56,7 @@ const AIChatbotWidget = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://localhost:5000/api/ai/chat',
+        `${process.env.REACT_APP_API_URL}/ai/chat`,
         { message: userMsg },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -88,7 +88,7 @@ const AIChatbotWidget = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://localhost:5000/api/ai/confirm-ticket',
+        `${process.env.REACT_APP_API_URL}/ai/confirm-ticket`,
         { proposal: pendingProposal, contactPhone },
         { headers: { Authorization: `Bearer ${token}` } }
       );
