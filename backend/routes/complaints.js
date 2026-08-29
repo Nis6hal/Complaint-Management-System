@@ -19,6 +19,7 @@ router.post('/', async (req, res) => {
       contactEmail,
       serviceAddress,
       preferredContactMethod,
+      userId,
     } = req.body;
 
     let aiCategory = '';
@@ -43,8 +44,10 @@ router.post('/', async (req, res) => {
       console.warn('AI Model Inference Service notice:', aiErr.message);
     }
 
+    const targetUserId = (userId && req.user.role === 'admin') ? userId : req.user._id;
+
     const complaint = await Complaint.create({
-      user: req.user._id,
+      user: targetUserId,
       title,
       category,
       description,

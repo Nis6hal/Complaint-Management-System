@@ -6,6 +6,8 @@ const UserNav = [
   { label: "Dashboard", icon: "🏠", path: "/dashboard" },
   { label: "New Complaint", icon: "✏️", path: "/complaints/new" },
   { label: "My Complaints", icon: "📋", path: "/complaints" },
+  { label: "Profile", icon: "👤", path: "/profile" },
+  { label: "Logout", icon: "🚪", action: "logout" },
 ];
 
 const AdminNav = [
@@ -14,6 +16,7 @@ const AdminNav = [
   { label: "All Complaints", icon: "📋", path: "/admin/complaints" },
   { label: "Users", icon: "👥", path: "/admin/users" },
   { label: "Profile", icon: "👤", path: "/profile" },
+  { label: "Logout", icon: "🚪", action: "logout" },
 ];
 
 export default function Sidebar({ menuOpen, onMenuClose }) {
@@ -66,9 +69,9 @@ export default function Sidebar({ menuOpen, onMenuClose }) {
         <nav className="sidebar-nav">
           {navItems.map((item) => (
             <button
-              key={item.path}
+              key={item.path || item.action}
               className={`nav-item ${location.pathname === item.path ? "active" : ""}`}
-              onClick={() => navigate(item.path)}
+              onClick={() => item.action === 'logout' ? logout() : navigate(item.path)}
             >
               <span className="nav-icon">{item.icon}</span>
               {item.label}

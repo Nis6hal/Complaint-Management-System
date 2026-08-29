@@ -10,6 +10,7 @@ import ComplaintForm from "./pages/ComplaintForm";
 import MyComplaints from "./pages/MyComplaints";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminComplaints from "./pages/AdminComplaints";
+import AdminComplaintForm from "./pages/AdminComplaintForm";
 import AdminUsers from "./pages/AdminUsers";
 import AdminUserDetail from "./pages/AdminUserDetail";
 import Profile from "./pages/Profile";
@@ -143,6 +144,16 @@ function AppRoutes() {
           <AdminRoute>
             <AppLayout>
               <AdminComplaints />
+            </AppLayout>
+          </AdminRoute>
+        }
+      />
+      <Route
+        path="/admin/complaints/new"
+        element={
+          <AdminRoute>
+            <AppLayout>
+              <AdminComplaintForm />
             </AppLayout>
           </AdminRoute>
         }

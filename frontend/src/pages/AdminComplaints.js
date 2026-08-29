@@ -75,9 +75,14 @@ export default function AdminComplaints() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1>All Complaints</h1>
-        <p>{complaints.length} complaint{complaints.length !== 1 ? 's' : ''} found</p>
+      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <h1>All Complaints</h1>
+          <p>{complaints.length} complaint{complaints.length !== 1 ? 's' : ''} found</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => navigate('/admin/complaints/new')}>
+          ✏️ Add Complaint
+        </button>
       </div>
 
       {/* Filters */}
