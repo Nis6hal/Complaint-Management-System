@@ -132,14 +132,22 @@ const AIChatbotWidget = () => {
 
       {/* Slide-out Drawer Widget */}
       <Drawer
-        anchor="right"
+        anchor={isMobile ? 'bottom' : 'right'}
         open={open}
         onClose={() => setOpen(false)}
         PaperProps={{
           sx: {
-            width: { xs: '100vw', sm: 420 },
-            height: { xs: '100dvh', sm: '100%' },
-            maxHeight: '100dvh',
+            // Mobile: bottom sheet style
+            width: '100%',
+            height: { xs: '92dvh', sm: '100%' },
+            maxHeight: { xs: '92dvh', sm: '100dvh' },
+            // Desktop: fixed right-panel width
+            ...(isMobile ? {
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+            } : {
+              width: 420,
+            }),
             p: 0,
             display: 'flex',
             flexDirection: 'column',
