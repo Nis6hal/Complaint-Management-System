@@ -137,8 +137,9 @@ const AIChatbotWidget = () => {
         onClose={() => setOpen(false)}
         PaperProps={{
           sx: {
-            width: { xs: '100%', sm: 420 },
-            height: { xs: '100%', sm: '100%' },
+            width: { xs: '100vw', sm: 420 },
+            height: { xs: '100dvh', sm: '100%' },
+            maxHeight: '100dvh',
             p: 0,
             display: 'flex',
             flexDirection: 'column',
@@ -148,18 +149,32 @@ const AIChatbotWidget = () => {
         }}
       >
         {/* Header */}
-        <Box sx={{ p: { xs: 1.5, sm: 2 }, backgroundColor: '#0052D4', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
+        <Box sx={{ p: { xs: 1.5, sm: 2 }, backgroundColor: '#0052D4', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, minWidth: 0 }}>
             <SmartToyIcon />
-            <Typography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold">NTC AI Assistant</Typography>
+            <Typography variant={isMobile ? "subtitle1" : "h6"} fontWeight="bold" noWrap>NTC AI Assistant</Typography>
           </Box>
-          <IconButton color="inherit" onClick={() => setOpen(false)} size={isMobile ? "small" : "medium"}>
+          <IconButton color="inherit" onClick={() => setOpen(false)} size={isMobile ? "small" : "medium"} sx={{ flexShrink: 0 }}>
             <CloseIcon />
           </IconButton>
         </Box>
 
         {/* Quick Suggestion Chips */}
-        <Box sx={{ p: { xs: 0.5, sm: 1 }, backgroundColor: '#eef2f6', display: 'flex', gap: 0.5, overflowX: 'auto', flexWrap: 'nowrap' }}>
+        <Box
+          sx={{
+            px: { xs: 0.75, sm: 1 },
+            py: 0.75,
+            backgroundColor: '#eef2f6',
+            display: 'flex',
+            gap: 0.5,
+            overflowX: 'auto',
+            flexWrap: 'nowrap',
+            flexShrink: 0,
+            // Hide scrollbar but keep scroll functionality
+            '&::-webkit-scrollbar': { display: 'none' },
+            scrollbarWidth: 'none',
+          }}
+        >
           {quickReplies.map((qr, idx) => (
             <Chip
               key={idx}
@@ -169,13 +184,18 @@ const AIChatbotWidget = () => {
               clickable
               color="primary"
               variant="outlined"
-              sx={{ backgroundColor: '#fff', fontSize: { xs: '0.7rem', sm: '0.75rem' }, whitespace: 'nowrap' }}
+              sx={{
+                backgroundColor: '#fff',
+                fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                whiteSpace: 'nowrap',   // Fixed: was 'whitespace' (invalid CSS-in-JS key)
+                flexShrink: 0,
+              }}
             />
           ))}
         </Box>
 
         {/* Message Log */}
-        <Box sx={{ flex: 1, p: { xs: 1, sm: 2 }, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 2 }, backgroundColor: '#f8f9fa' }}>
+        <Box sx={{ flex: 1, p: { xs: 1, sm: 2 }, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 2 }, backgroundColor: '#f8f9fa', minHeight: 0 }}>
           {messages.map((m, idx) => (
             <Box
               key={idx}
@@ -237,7 +257,18 @@ const AIChatbotWidget = () => {
         </Box>
 
         {/* Input Bar */}
-        <Box sx={{ p: { xs: 1, sm: 1.5 }, backgroundColor: '#fff', borderTop: '1px solid #e0e0e0', display: 'flex', gap: 1, pb: { xs: 2, sm: 1.5 } }}>
+        <Box
+          sx={{
+            p: { xs: 1, sm: 1.5 },
+            backgroundColor: '#fff',
+            borderTop: '1px solid #e0e0e0',
+            display: 'flex',
+            gap: 1,
+            flexShrink: 0,
+            // Safe area inset for iOS home indicator / Android nav bar
+            paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+          }}
+        >
           <TextField
             fullWidth
             size="small"
@@ -246,7 +277,7 @@ const AIChatbotWidget = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
           />
-          <IconButton color="primary" onClick={handleSend} disabled={loading} size={isMobile ? "medium" : "small"}>
+          <IconButton color="primary" onClick={handleSend} disabled={loading} size={isMobile ? "medium" : "small"} sx={{ flexShrink: 0 }}>
             <SendIcon />
           </IconButton>
         </Box>
