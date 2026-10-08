@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+﻿import React, { useState, useCallback } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Menu, X, Radio } from "lucide-react";
 
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -16,24 +18,16 @@ import AdminUserDetail from "./pages/AdminUserDetail";
 import Profile from "./pages/Profile";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
+import AIChatbotWidget from "./components/AIChatbotWidget";
+import AIDashboardPage from "./pages/AIDashboardPage";
 
 // Route guard for logged-in users
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading)
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <div
-          className="spinner spinner-dark"
-          style={{ width: 36, height: 36 }}
-        />
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <div className="spinner spinner-dark" style={{ width: 36, height: 36 }} />
       </div>
     );
   return user ? children : <Navigate to="/login" replace />;
@@ -48,9 +42,6 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
-import AIChatbotWidget from "./components/AIChatbotWidget";
-import AIDashboardPage from "./pages/AIDashboardPage";
-
 // Layout wrapper with header and sidebar
 const AppLayout = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -60,8 +51,11 @@ const AppLayout = ({ children }) => {
     <>
       <Header menuOpen={menuOpen} onMenuToggle={toggleMenu} />
       <div className="page-wrapper">
+        <div className={`sidebar-overlay ${menuOpen ? "overlay-visible" : ""}`} onClick={closeMenu} />
         <Sidebar menuOpen={menuOpen} onMenuClose={closeMenu} />
-        <main className="main-content">{children}</main>
+        <main className="main-content">
+          <div className="content-inner">{children}</div>
+        </main>
       </div>
       <AIChatbotWidget />
     </>
@@ -69,118 +63,31 @@ const AppLayout = ({ children }) => {
 };
 
 function AppRoutes() {
+  const { user } = useAuth();
   return (
     <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      {/* Admin and User routes */}
-      <Route
-        path="/ai-analytics"
-        element={
-          <AdminRoute>
-            <AppLayout>
-              <AIDashboardPage />
-            </AppLayout>
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Dashboard />
-            </AppLayout>
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/complaints/new"
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <ComplaintForm />
-            </AppLayout>
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/complaints"
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <MyComplaints />
-            </AppLayout>
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <PrivateRoute>
-            <AppLayout>
-              <Profile />
-            </AppLayout>
-          </PrivateRoute>
-        }
-      />
+      {/* User routes */}
+      <Route path="/dashboard" element={<PrivateRoute><AppLayout><Dashboard /></AppLayout></PrivateRoute>} />
+      <Route path="/complaints/new" element={<PrivateRoute><AppLayout><ComplaintForm /></AppLayout></PrivateRoute>} />
+      <Route path="/complaints" element={<PrivateRoute><AppLayout><MyComplaints /></AppLayout></PrivateRoute>} />
+      <Route path="/profile" element={<PrivateRoute><AppLayout><Profile /></AppLayout></PrivateRoute>} />
 
       {/* Admin routes */}
-      <Route
-        path="/admin"
-        element={
-          <AdminRoute>
-            <AppLayout>
-              <AdminDashboard />
-            </AppLayout>
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/complaints"
-        element={
-          <AdminRoute>
-            <AppLayout>
-              <AdminComplaints />
-            </AppLayout>
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/complaints/new"
-        element={
-          <AdminRoute>
-            <AppLayout>
-              <AdminComplaintForm />
-            </AppLayout>
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <AdminRoute>
-            <AppLayout>
-              <AdminUsers />
-            </AppLayout>
-          </AdminRoute>
-        }
-      />
-      <Route
-        path="/admin/users/:id"
-        element={
-          <AdminRoute>
-            <AppLayout>
-              <AdminUserDetail />
-            </AppLayout>
-          </AdminRoute>
-        }
-      />
+      <Route path="/ai-analytics" element={<AdminRoute><AppLayout><AIDashboardPage /></AppLayout></AdminRoute>} />
+      <Route path="/admin" element={<AdminRoute><AppLayout><AdminDashboard /></AppLayout></AdminRoute>} />
+      <Route path="/admin/complaints" element={<AdminRoute><AppLayout><AdminComplaints /></AppLayout></AdminRoute>} />
+      <Route path="/admin/complaints/new" element={<AdminRoute><AppLayout><AdminComplaintForm /></AppLayout></AdminRoute>} />
+      <Route path="/admin/users" element={<AdminRoute><AppLayout><AdminUsers /></AppLayout></AdminRoute>} />
+      <Route path="/admin/users/:id" element={<AdminRoute><AppLayout><AdminUserDetail /></AppLayout></AdminRoute>} />
 
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      {/* Fallback: unauthenticated goes to landing, authenticated goes to dashboard */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

@@ -1,6 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  FileText,
+  Clock,
+  RefreshCw,
+  CheckCircle2,
+  Lock,
+  Users,
+  ArrowRight,
+  ClipboardList,
+} from 'lucide-react';
 import api from '../utils/api';
+
+const statusBadge = (s) => {
+  const map = {
+    Pending: 'badge-pending',
+    'In Progress': 'badge-progress',
+    Resolved: 'badge-resolved',
+    Closed: 'badge-closed',
+  };
+  return (
+    <span className={`badge ${map[s] || ''}`}>
+      <span className="badge-dot" />
+      {s}
+    </span>
+  );
+};
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -8,102 +33,187 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/admin/stats').then(res => {
-      setStats(res.data);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    api
+      .get('/admin/stats')
+      .then((res) => {
+        setStats(res.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
-  if (loading) return <div style={{ textAlign: 'center', padding: 80 }}><span className="spinner spinner-dark" style={{ width: 40, height: 40 }} /></div>;
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: 80 }}>
+        <span className="spinner spinner-dark" style={{ width: 36, height: 36 }} />
+      </div>
+    );
+  }
 
   return (
     <div>
       <div className="page-header">
-        <h1>Admin Overview</h1>
-        <p>System-wide complaint statistics</p>
+        <h1>Operations Overview</h1>
+        <p>Real-time network operational metrics and complaint distribution</p>
       </div>
 
       {stats && (
         <>
           <div className="stats-grid">
             <div className="stat-card">
-              <span className="stat-icon">📋</span>
-              <span className="stat-label">Total Complaints</span>
-              <span className="stat-value">{stats.total}</span>
+              <div className="stat-info">
+                <span className="stat-label">Total Complaints</span>
+                <span className="stat-value">{stats.total}</span>
+              </div>
+              <div className="stat-icon-wrapper stat-icon-blue">
+                <FileText size={22} />
+              </div>
             </div>
+
             <div className="stat-card">
-              <span className="stat-icon">⏳</span>
-              <span className="stat-label">Pending</span>
-              <span className="stat-value" style={{ color: '#92400e' }}>{stats.pending}</span>
+              <div className="stat-info">
+                <span className="stat-label">Pending Triage</span>
+                <span className="stat-value">{stats.pending}</span>
+              </div>
+              <div className="stat-icon-wrapper stat-icon-amber">
+                <Clock size={22} />
+              </div>
             </div>
+
             <div className="stat-card">
-              <span className="stat-icon">🔄</span>
-              <span className="stat-label">In Progress</span>
-              <span className="stat-value" style={{ color: '#1e40af' }}>{stats.inProgress}</span>
+              <div className="stat-info">
+                <span className="stat-label">In Progress</span>
+                <span className="stat-value">{stats.inProgress}</span>
+              </div>
+              <div className="stat-icon-wrapper stat-icon-cyan">
+                <RefreshCw size={22} />
+              </div>
             </div>
+
             <div className="stat-card">
-              <span className="stat-icon">✅</span>
-              <span className="stat-label">Resolved</span>
-              <span className="stat-value" style={{ color: '#15803d' }}>{stats.resolved}</span>
+              <div className="stat-info">
+                <span className="stat-label">Resolved</span>
+                <span className="stat-value">{stats.resolved}</span>
+              </div>
+              <div className="stat-icon-wrapper stat-icon-emerald">
+                <CheckCircle2 size={22} />
+              </div>
             </div>
+
             <div className="stat-card">
-              <span className="stat-icon">🔒</span>
-              <span className="stat-label">Closed</span>
-              <span className="stat-value">{stats.closed}</span>
+              <div className="stat-info">
+                <span className="stat-label">Closed Archive</span>
+                <span className="stat-value">{stats.closed}</span>
+              </div>
+              <div className="stat-icon-wrapper stat-icon-slate">
+                <Lock size={22} />
+              </div>
             </div>
+
             <div className="stat-card">
-              <span className="stat-icon">👥</span>
-              <span className="stat-label">Total Users</span>
-              <span className="stat-value" style={{ color: 'var(--blue)' }}>{stats.totalUsers}</span>
+              <div className="stat-info">
+                <span className="stat-label">Subscribers</span>
+                <span className="stat-value">{stats.totalUsers}</span>
+              </div>
+              <div className="stat-icon-wrapper stat-icon-blue">
+                <Users size={22} />
+              </div>
             </div>
           </div>
 
-          <div className="responsive-grid-2">
-            <div className="card">
-              <h3 style={{ fontSize: 15, marginBottom: 16 }}>Complaints by Category</h3>
-              {stats.byCategory.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No data</p> : stats.byCategory.map(item => {
-                const pct = stats.total ? Math.round((item.count / stats.total) * 100) : 0;
-                return (
-                  <div key={item._id} style={{ marginBottom: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}>
-                      <span>{item._id}</span>
-                      <span style={{ fontWeight: 600 }}>{item.count} ({pct}%)</span>
-                    </div>
-                    <div style={{ height: 6, background: 'var(--border)', borderRadius: 99 }}>
-                      <div style={{ width: `${pct}%`, height: '100%', background: 'var(--blue)', borderRadius: 99, transition: 'width 0.6s' }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="card">
-              <h3 style={{ fontSize: 15, marginBottom: 16 }}>Complaints by Priority</h3>
-              {stats.byPriority.length === 0 ? <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No data</p> : stats.byPriority.map(item => {
-                const colors = { Low: '#64748b', Medium: '#1e40af', High: '#92400e', Critical: '#991b1b' };
-                const pct = stats.total ? Math.round((item.count / stats.total) * 100) : 0;
-                return (
-                  <div key={item._id} style={{ marginBottom: 12 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 4 }}>
-                      <span style={{ color: colors[item._id] || 'inherit', fontWeight: 600 }}>{item._id}</span>
-                      <span style={{ fontWeight: 600 }}>{item.count}</span>
-                    </div>
-                    <div style={{ height: 6, background: 'var(--border)', borderRadius: 99 }}>
-                      <div style={{ width: `${pct}%`, height: '100%', background: colors[item._id] || 'var(--blue)', borderRadius: 99 }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', gap: 12, marginBottom: 24, flexWrap: 'wrap' }}>
             <button className="btn btn-primary" onClick={() => navigate('/admin/complaints')}>
-              📋 Manage Complaints
+              <ClipboardList size={16} /> Manage All Complaints
             </button>
             <button className="btn btn-outline" onClick={() => navigate('/admin/users')}>
-              👥 View Users
+              <Users size={16} /> View Subscriber Directory
             </button>
+          </div>
+
+          {/* Breakdown cards */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: 20,
+            }}
+          >
+            {/* By Priority */}
+            <div className="card">
+              <h3 style={{ fontSize: 16, marginBottom: 16 }}>Complaints by Priority</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {stats.byPriority &&
+                  stats.byPriority.map((p) => {
+                    const pct = stats.total > 0 ? Math.round((p.count / stats.total) * 100) : 0;
+                    return (
+                      <div key={p._id}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            marginBottom: 4,
+                            fontSize: 13,
+                          }}
+                        >
+                          <span style={{ fontWeight: 600 }}>{p._id || 'Unspecified'}</span>
+                          <span style={{ color: 'var(--slate-500)' }}>
+                            {p.count} ({pct}%)
+                          </span>
+                        </div>
+                        <div
+                          style={{
+                            height: 6,
+                            background: 'var(--slate-100)',
+                            borderRadius: 'var(--radius-full)',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <div
+                            style={{
+                              width: `${pct}%`,
+                              height: '100%',
+                              backgroundColor:
+                                p._id === 'Critical'
+                                  ? '#ef4444'
+                                  : p._id === 'High'
+                                  ? '#f97316'
+                                  : p._id === 'Medium'
+                                  ? '#3b82f6'
+                                  : '#64748b',
+                              borderRadius: 'var(--radius-full)',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* By Category */}
+            <div className="card">
+              <h3 style={{ fontSize: 16, marginBottom: 16 }}>Complaints by Category</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {stats.byCategory &&
+                  stats.byCategory.map((cat) => (
+                    <div
+                      key={cat._id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '8px 12px',
+                        background: 'var(--slate-50)',
+                        borderRadius: 'var(--radius-sm)',
+                        fontSize: 13,
+                      }}
+                    >
+                      <span style={{ fontWeight: 500 }}>{cat._id || 'General'}</span>
+                      <span className="badge badge-medium">{cat.count}</span>
+                    </div>
+                  ))}
+              </div>
+            </div>
           </div>
         </>
       )}

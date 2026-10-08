@@ -1,17 +1,22 @@
-import React from 'react';
+﻿import React from "react";
+import { Link } from "react-router-dom";
+import { Radio, Menu, X } from "lucide-react";
 
 export default function Header({ menuOpen, onMenuToggle }) {
   return (
     <header className="app-header">
       <div className="header-left">
-        <h1 className="header-logo">📋 CMS</h1>
+        <Link to="/" className="header-logo">
+          <Radio size={22} color="#3b82f6" />
+          TelcoResolve
+        </Link>
       </div>
-      <button 
+      <button
         className="menu-button"
         onClick={onMenuToggle}
-        aria-label="Toggle menu"
+        aria-label="Toggle navigation menu"
       >
-        {menuOpen ? '✕' : '☰'}
+        {menuOpen ? <X size={22} /> : <Menu size={22} />}
       </button>
     </header>
   );

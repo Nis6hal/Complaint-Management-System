@@ -1,149 +1,210 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Send, ArrowLeft, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 import api from '../utils/api';
 
 const CATEGORIES = [
-  'Network Issue', 'Billing Problem', 'Poor Signal',
-  'Internet Speed', 'Customer Service', 'Roaming Issue',
-  'SIM Card Problem', 'Other',
+  'Network Issue',
+  'Billing Problem',
+  'Poor Signal',
+  'Internet Speed',
+  'Customer Service',
+  'Roaming Issue',
+  'SIM Card Problem',
+  'Other',
 ];
 
-const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
+const PRIORITIES = [
+  { value: 'Low', label: 'Low — General questions or minor inconvenience' },
+  { value: 'Medium', label: 'Medium — Degraded service or performance' },
+  { value: 'High', label: 'High — Frequent disconnection or billing error' },
+  { value: 'Critical', label: 'Critical — Complete outage or emergency service down' },
+];
 
 export default function ComplaintForm() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [form, setForm] = useState({
     title: '',
     category: '',
     description: '',
     priority: 'Medium',
-    contactName: '',
-    contactPhone: '',
-    contactEmail: '',
-    serviceAddress: '',
-    preferredContactMethod: 'Phone',
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!user) return;
-    setForm((prev) => ({
-      ...prev,
-      contactName: prev.contactName || user.name || '',
-      contactPhone: prev.contactPhone || user.phone || '',
-      contactEmail: prev.contactEmail || user.email || '',
-    }));
-  }, [user]);
-
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); setSuccess('');
-    if (!form.contactPhone) return setError('Contact phone is required for this complaint.');
-    if (form.description.length < 20) return setError('Description must be at least 20 characters.');
+    setError('');
+    setSuccess('');
+
+    if (form.description.trim().length < 20) {
+      return setError('Please provide a more detailed description (minimum 20 characters).');
+    }
+
     setLoading(true);
     try {
       await api.post('/complaints', form);
-      setSuccess('✅ Complaint submitted successfully!');
-      setTimeout(() => navigate('/complaints'), 1500);
+      setSuccess('Your complaint has been submitted successfully! Redirecting...');
+      setTimeout(() => navigate('/complaints'), 1400);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to submit complaint.');
+      setError(err.response?.data?.message || 'Failed to submit complaint. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const descLength = form.description.trim().length;
+
   return (
     <div>
       <div className="page-header">
+        <button
+          className="btn btn-ghost btn-sm"
+          onClick={() => navigate(-1)}
+          style={{ marginBottom: 12, paddingLeft: 0 }}
+        >
+          <ArrowLeft size={16} /> Back
+        </button>
         <h1>Submit a Complaint</h1>
-        <p>Describe your issue and we'll get back to you as soon as possible</p>
+        <p>Describe your telecom issue so our engineering & support team can investigate immediately</p>
       </div>
 
-      <div className="card" style={{ maxWidth: 620 }}>
+      <div className="card" style={{ maxWidth: 680 }}>
+        {error && (
+          <div className="alert-banner alert-banner-error">
+            <AlertCircle size={18} style={{ flexShrink: 0, marginTop: 1 }} />
+            <div>{error}</div>
+          </div>
+        )}
+
+        {success && (
+          <div className="alert-banner alert-banner-success">
+            <CheckCircle2 size={18} style={{ flexShrink: 0, marginTop: 1 }} />
+            <div>{success}</div>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Complaint Title *</label>
-            <input className="form-control" name="title" placeholder="Brief summary of the issue" value={form.title} onChange={handleChange} required />
+            <input
+              className="form-control"
+              name="title"
+              placeholder="e.g. Fiber optical light blinking red since morning"
+              value={form.title}
+              onChange={handleChange}
+              required
+            />
           </div>
 
-          <div className="responsive-grid-2">
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: 16,
+            }}
+          >
             <div className="form-group">
-              <label>Category *</label>
-              <select className="form-control" name="category" value={form.category} onChange={handleChange} required>
-                <option value="">Select category</option>
-                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              <label>Service Category *</label>
+              <select
+                className="form-control"
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select category...</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
               </select>
             </div>
+
             <div className="form-group">
-              <label>Priority</label>
-              <select className="form-control" name="priority" value={form.priority} onChange={handleChange}>
-                {PRIORITIES.map(p => <option key={p}>{p}</option>)}
+              <label>Priority Level</label>
+              <select
+                className="form-control"
+                name="priority"
+                value={form.priority}
+                onChange={handleChange}
+              >
+                {PRIORITIES.map((p) => (
+                  <option key={p.value} value={p.value}>
+                    {p.value}
+                  </option>
+                ))}
               </select>
             </div>
-          </div>
-
-          <div className="responsive-grid-2" style={{ marginTop: 8 }}>
-            <div className="form-group">
-              <label>Contact Name</label>
-              <input className="form-control" name="contactName" placeholder="Name on this complaint" value={form.contactName} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label>Contact Phone *</label>
-              <input className="form-control" name="contactPhone" placeholder="Phone number for this complaint" value={form.contactPhone} onChange={handleChange} required />
-            </div>
-          </div>
-
-          <div className="responsive-grid-2" style={{ marginTop: 8 }}>
-            <div className="form-group">
-              <label>Contact Email</label>
-              <input className="form-control" type="email" name="contactEmail" placeholder="Email for this complaint" value={form.contactEmail} onChange={handleChange} />
-            </div>
-            <div className="form-group">
-              <label>Preferred Contact Method</label>
-              <select className="form-control" name="preferredContactMethod" value={form.preferredContactMethod} onChange={handleChange}>
-                <option>Phone</option>
-                <option>Email</option>
-                <option>Any</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group" style={{ marginTop: 8 }}>
-            <label>Service Address</label>
-            <input className="form-control" name="serviceAddress" placeholder="Optional address or location" value={form.serviceAddress} onChange={handleChange} />
           </div>
 
           <div className="form-group">
-            <label>Description * <span style={{ fontWeight: 400, color: '#a0aec0', fontSize: 12 }}>(min 20 characters)</span></label>
+            <label>
+              <span>Detailed Description *</span>
+              <span
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: descLength >= 20 ? 'var(--status-resolved-dot)' : 'var(--slate-400)',
+                }}
+              >
+                {descLength}/20 min chars
+              </span>
+            </label>
             <textarea
               className="form-control"
               name="description"
-              placeholder="Describe your issue in detail — when it started, what you've tried, account number, etc."
+              placeholder="Please provide specifics: when the issue began, affected phone number or account number, router lights, or speed test results."
               value={form.description}
               onChange={handleChange}
               rows={6}
               required
               style={{ resize: 'vertical' }}
             />
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, textAlign: 'right' }}>
-              {form.description.length} characters
-            </div>
           </div>
 
-          {error && <p className="error-msg">{error}</p>}
-          {success && <p className="success-msg">{success}</p>}
+          <div
+            style={{
+              padding: 12,
+              background: 'var(--slate-50)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-subtle)',
+              marginBottom: 20,
+              fontSize: 13,
+              color: 'var(--slate-600)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            <Info size={16} color="#3b82f6" style={{ flexShrink: 0 }} />
+            <span>Tickets are timestamped and assigned to a network engineer within our SLA guidelines.</span>
+          </div>
 
-          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-            <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? <><span className="spinner" />Submitting...</> : '📤 Submit Complaint'}
+          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={() => navigate('/complaints')}
+              disabled={loading}
+            >
+              Cancel
             </button>
-            <button type="button" className="btn btn-outline" onClick={() => navigate('/dashboard')}>Cancel</button>
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? (
+                <>
+                  <span className="spinner" /> Submitting...
+                </>
+              ) : (
+                <>
+                  <Send size={15} /> Submit Ticket
+                </>
+              )}
+            </button>
           </div>
         </form>
       </div>

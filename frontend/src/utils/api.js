@@ -11,11 +11,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally — log user out
+// Handle 401 globally — log user out if token expired/invalid on protected routes
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isAuthRoute = error.config?.url?.includes('/auth/');
+    if (error.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';

@@ -1,69 +1,125 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Users, Mail, Phone, Calendar, Shield, Search } from 'lucide-react';
 import api from '../utils/api';
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/admin/users').then(res => {
-      setUsers(res.data.users);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    api
+      .get('/admin/users')
+      .then((res) => {
+        setUsers(res.data.users);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
+
+  const filteredUsers = users.filter(
+    (u) =>
+      u.name?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase()) ||
+      u.phone?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div>
       <div className="page-header">
-        <h1>Registered Users</h1>
-        <p>{users.length} user{users.length !== 1 ? 's' : ''} registered</p>
+        <h1>Subscriber Directory</h1>
+        <p>All registered customers and administrators</p>
+      </div>
+
+      <div className="card" style={{ marginBottom: 20, padding: 14 }}>
+        <div style={{ maxWidth: 360, position: 'relative' }}>
+          <div className="input-icon-wrapper">
+            <span className="input-icon-left">
+              <Search size={16} />
+            </span>
+            <input
+              className="form-control has-icon-left"
+              placeholder="Search by name, email, or phone..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="card">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 60 }}><span className="spinner spinner-dark" style={{ width: 36, height: 36 }} /></div>
-        ) : users.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 60 }}>
+            <span className="spinner spinner-dark" style={{ width: 32, height: 32 }} />
+          </div>
+        ) : filteredUsers.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">👥</div>
-            <h3>No users yet</h3>
-            <p>Users will appear here once they register</p>
+            <div className="empty-state-icon">
+              <Users size={26} />
+            </div>
+            <h3>No subscribers found</h3>
+            <p>Try refining your search keyword.</p>
           </div>
         ) : (
           <div className="table-wrapper">
             <table>
               <thead>
                 <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Registered</th>
-                  <th></th>
+                  <th>Subscriber</th>
+                  <th>Role</th>
+                  <th>Email Address</th>
+                  <th>Contact Phone</th>
+                  <th>Joined Date</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map(u => {
-                  const initials = u.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U';
+                {filteredUsers.map((u) => {
+                  const initials = u.name
+                    ? u.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .slice(0, 2)
+                    : 'U';
+                  const isAdmin = u.role === 'admin';
+
                   return (
-                    <tr
-                    key={u._id}
-                    className="clickable-row"
-                    onClick={() => navigate(`/admin/users/${u._id}`)}
-                    title="View user details"
-                    style={{ cursor: 'pointer' }}
-                  >
-                      <td data-label="User">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+                    <tr key={u._id}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div
+                            style={{
+                              width: 34,
+                              height: 34,
+                              borderRadius: '50%',
+                              background: isAdmin ? 'var(--slate-800)' : 'var(--brand-primary)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#ffffff',
+                              fontSize: 12,
+                              fontWeight: 700,
+                              flexShrink: 0,
+                            }}
+                          >
                             {initials}
                           </div>
-                          <span style={{ fontWeight: 500 }}>{u.name}</span>
+                          <div>
+                            <div style={{ fontWeight: 600, color: 'var(--slate-900)' }}>{u.name}</div>
+                          </div>
                         </div>
                       </td>
-                      <td data-label="Email" style={{ fontSize: 13 }}>{u.email}</td>
-                      <td data-label="Phone" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{u.phone || '—'}</td>
-                      <td data-label="Registered" style={{ fontSize: 13, color: 'var(--text-muted)' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        <span className={`badge ${isAdmin ? 'badge-high' : 'badge-low'}`}>
+                          {isAdmin ? 'Admin NOC' : 'Subscriber'}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: 13, color: 'var(--slate-700)' }}>{u.email}</td>
+                      <td style={{ fontSize: 13, color: 'var(--slate-500)' }}>{u.phone || '—'}</td>
+                      <td style={{ fontSize: 13, color: 'var(--slate-500)' }}>
+                        {new Date(u.createdAt).toLocaleDateString()}
+                      </td>
                     </tr>
                   );
                 })}
