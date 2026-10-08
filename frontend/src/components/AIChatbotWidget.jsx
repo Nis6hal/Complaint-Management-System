@@ -78,7 +78,7 @@ const AIChatbotWidget = () => {
   const [messages, setMessages] = useState([
     {
       sender: 'bot',
-      text: 'Namaste! I am the Nepal Telecom AI Assistant.\n\nDescribe a complaint, check ticket status, or ask for troubleshooting advice — in English or Nepali.',
+      text: 'Namaste! I am the AI Support Assistant.\n\nDescribe a complaint, check ticket status, or ask for troubleshooting advice — in English or Nepali.',
     },
   ]);
   const [pendingProposal, setPendingProposal] = useState(null);
@@ -244,10 +244,10 @@ const AIChatbotWidget = () => {
                 }}
                 noWrap
               >
-                NTC AI Assistant
+                AI Support Assistant
               </Typography>
               <Typography sx={{ fontSize: 11, color: 'rgba(255,255,255,0.65)', fontWeight: 500 }}>
-                Powered by Nepal Telecom ML
+                Intelligent Triaging & Assistance
               </Typography>
             </Box>
           </Box>
@@ -558,3 +558,4 @@ const AIChatbotWidget = () => {
 };
 
 export default AIChatbotWidget;
+
