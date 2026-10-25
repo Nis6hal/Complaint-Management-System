@@ -23,6 +23,28 @@ exports.protect = async (req, res, next) => {
   }
 };
 
+// Optional protect — populates req.user if token is valid, otherwise proceeds as guest
+exports.optionalProtect = async (req, res, next) => {
+  let token;
+
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token || token === 'null' || token === 'undefined') {
+    req.user = null;
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id).select('-password');
+  } catch (err) {
+    req.user = null;
+  }
+  next();
+};
+
 // Admin-only route guard
 exports.adminOnly = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
@@ -31,3 +53,5 @@ exports.adminOnly = (req, res, next) => {
     res.status(403).json({ message: 'Access denied. Admins only.' });
   }
 };
+
+

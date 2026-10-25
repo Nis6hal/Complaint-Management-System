@@ -119,8 +119,10 @@ If you have a ticket ID, please type it in the format: **\`CMP100201\`**.`,
     // Attempt Groq LLM response generation with fallback to local rules
     const llmAdvice = await aiService.generateLLMTroubleshooting(text, mlPrediction.category, mlPrediction.sentiment);
     
-    // Step 2: Perform Duplicate Check against user's own recent DB tickets
-    const recentComplaints = await Complaint.find({ user: user._id }).select('ticketId title description').sort({ createdAt: -1 }).limit(100);
+    // Step 2: Perform Duplicate Check against user's own recent DB tickets (if logged in)
+    const recentComplaints = user
+      ? await Complaint.find({ user: user._id }).select('ticketId title description').sort({ createdAt: -1 }).limit(100)
+      : [];
     const dupCheck = await aiService.checkDuplicate(text, recentComplaints);
 
     let duplicateNotice = "";
@@ -128,12 +130,16 @@ If you have a ticket ID, please type it in the format: **\`CMP100201\`**.`,
       duplicateNotice = `\n\n⚠️ **Note**: This issue seems similar to existing **Ticket ${dupCheck.matchedTicketId}** (${Math.round(dupCheck.similarityScore * 100)}% similarity).`;
     }
 
+    const registrationPrompt = user
+      ? `Would you like me to register this official support ticket now for our **${mlPrediction.department}** team?`
+      : `To officially register this support ticket with our **${mlPrediction.department}** team, please Sign In or Register an account!`;
+
     const humanizedReply = llmAdvice || `I've analyzed your request regarding **${mlPrediction.category}**.
 
 💡 **Troubleshooting Tip**:
 ${aiService.getTroubleshootingAdvice(mlPrediction.category)}${duplicateNotice}
 
-Would you like me to register this official support ticket now for our **${mlPrediction.department}** team?`;
+${registrationPrompt}`;
 
     return {
       reply: humanizedReply,
