@@ -1,4 +1,4 @@
-﻿import React, { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Menu, X, Radio } from "lucide-react";
@@ -42,7 +42,6 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
-// Layout wrapper with header and sidebar
 const AppLayout = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = useCallback(() => setMenuOpen((prev) => !prev), []);
@@ -57,7 +56,6 @@ const AppLayout = ({ children }) => {
           <div className="content-inner">{children}</div>
         </main>
       </div>
-      <AIChatbotWidget />
     </>
   );
 };
@@ -97,6 +95,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <AppRoutes />
+        <AIChatbotWidget />
       </BrowserRouter>
     </AuthProvider>
   );

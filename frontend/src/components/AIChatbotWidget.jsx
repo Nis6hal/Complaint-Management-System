@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box, Fab, Drawer, Typography, TextField, IconButton, Paper,
   Button, Chip, CircularProgress
@@ -67,6 +67,18 @@ const CheckIcon = () => (
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
   </svg>
 );
+const ResetIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+    <path d="M3 3v5h5" />
+  </svg>
+);
+const CopyIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </svg>
+);
 
 // ── Component ────────────────────────────────────────────────────────────────
 const AIChatbotWidget = () => {
@@ -83,11 +95,40 @@ const AIChatbotWidget = () => {
   ]);
   const [pendingProposal, setPendingProposal] = useState(null);
   const [contactPhone, setContactPhone] = useState('');
+  const [copiedIdx, setCopiedIdx] = useState(null);
   const messagesEndRef = useRef(null);
+
+  // Auto-fill phone if available from logged-in user profile
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('user') || '{}');
+      if (stored && stored.phone) {
+        setContactPhone(stored.phone);
+      }
+    } catch (_) {}
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, pendingProposal]);
+
+  const handleResetChat = () => {
+    setMessages([
+      {
+        sender: 'bot',
+        text: 'Namaste! I am the AI Support Assistant.\n\nDescribe a complaint, check ticket status, or ask for troubleshooting advice — in English or Nepali.',
+      },
+    ]);
+    setPendingProposal(null);
+  };
+
+  const handleCopyText = (text, idx) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedIdx(idx);
+      setTimeout(() => setCopiedIdx(null), 1800);
+    }
+  };
 
   const quickReplies = [
     { label: 'Fiber Internet Down', text: 'My fiber internet is not working' },
@@ -111,10 +152,14 @@ const AIChatbotWidget = () => {
 
     try {
       const token = localStorage.getItem('token');
+      const headers = token && token !== 'null' && token !== 'undefined'
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/ai/chat`,
+        `${apiUrl}/ai/chat`,
         { message: userMsg },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers }
       );
       setMessages((prev) => [...prev, { sender: 'bot', text: res.data.reply }]);
       if (res.data.action === 'PROPOSE_REGISTRATION' && res.data.proposal) {
@@ -133,15 +178,21 @@ const AIChatbotWidget = () => {
   const handleSend = () => handleSendText(input);
 
   const handleConfirmTicket = async () => {
+    const token = localStorage.getItem('token');
+    if (!token || token === 'null' || token === 'undefined') {
+      alert('Please sign in or register to submit an official complaint ticket.');
+      window.location.href = '/login';
+      return;
+    }
     if (!contactPhone.trim()) {
       alert('Please enter your contact phone number to register the ticket.');
       return;
     }
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/ai/confirm-ticket`,
+        `${apiUrl}/ai/confirm-ticket`,
         { proposal: pendingProposal, contactPhone },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -153,9 +204,8 @@ const AIChatbotWidget = () => {
         },
       ]);
       setPendingProposal(null);
-      setContactPhone('');
     } catch (err) {
-      alert('Failed to register ticket via AI: ' + err.message);
+      alert('Failed to register ticket via AI: ' + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
@@ -194,10 +244,10 @@ const AIChatbotWidget = () => {
         PaperProps={{
           sx: {
             width: '100%',
-            height: { xs: '92dvh', sm: '100%' },
-            maxHeight: { xs: '92dvh', sm: '100dvh' },
+            height: { xs: '88dvh', sm: '100%' },
+            maxHeight: { xs: '88dvh', sm: '100dvh' },
             ...(isMobile
-              ? { borderTopLeftRadius: 14, borderTopRightRadius: 14 }
+              ? { borderTopLeftRadius: 18, borderTopRightRadius: 18 }
               : { width: 420 }),
             p: 0,
             display: 'flex',
@@ -208,6 +258,30 @@ const AIChatbotWidget = () => {
           },
         }}
       >
+        {/* Mobile Pull Bar Indicator */}
+        {isMobile && (
+          <Box
+            sx={{
+              pt: 1,
+              pb: 0.5,
+              background: BRAND_DARK,
+              display: 'flex',
+              justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+            onClick={() => setOpen(false)}
+          >
+            <Box
+              sx={{
+                width: 44,
+                height: 4,
+                bgcolor: 'rgba(255,255,255,0.3)',
+                borderRadius: 2,
+              }}
+            />
+          </Box>
+        )}
+
         {/* Header */}
         <Box
           sx={{
@@ -251,18 +325,33 @@ const AIChatbotWidget = () => {
               </Typography>
             </Box>
           </Box>
-          <IconButton
-            onClick={() => setOpen(false)}
-            size="small"
-            sx={{
-              color: '#fff',
-              background: 'rgba(255,255,255,0.12)',
-              '&:hover': { background: 'rgba(255,255,255,0.22)' },
-              flexShrink: 0,
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <IconButton
+              onClick={handleResetChat}
+              size="small"
+              title="Reset conversation"
+              sx={{
+                color: '#fff',
+                background: 'rgba(255,255,255,0.12)',
+                '&:hover': { background: 'rgba(255,255,255,0.22)' },
+                flexShrink: 0,
+              }}
+            >
+              <ResetIcon />
+            </IconButton>
+            <IconButton
+              onClick={() => setOpen(false)}
+              size="small"
+              sx={{
+                color: '#fff',
+                background: 'rgba(255,255,255,0.12)',
+                '&:hover': { background: 'rgba(255,255,255,0.22)' },
+                flexShrink: 0,
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
         </Box>
 
         {/* Quick Reply Chips */}
@@ -369,6 +458,25 @@ const AIChatbotWidget = () => {
                 >
                   {m.text}
                 </Typography>
+                {m.sender === 'bot' && (
+                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 0.5 }}>
+                    <Button
+                      size="small"
+                      onClick={() => handleCopyText(m.text, idx)}
+                      startIcon={<CopyIcon />}
+                      sx={{
+                        fontSize: '0.68rem',
+                        py: 0.2, px: 0.8,
+                        minWidth: 0,
+                        color: BRAND_MUTED,
+                        textTransform: 'none',
+                        '&:hover': { color: BRAND_PRIMARY, bgcolor: 'rgba(29, 78, 216, 0.08)' }
+                      }}
+                    >
+                      {copiedIdx === idx ? 'Copied!' : 'Copy'}
+                    </Button>
+                  </Box>
+                )}
               </Box>
             </Box>
           ))}
@@ -423,45 +531,72 @@ const AIChatbotWidget = () => {
                 </Box>
               ))}
 
-              <TextField
-                size="small"
-                fullWidth
-                placeholder="Your contact phone number"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
-                sx={{
-                  mt: 1.5,
-                  mb: 1.25,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
-                    fontFamily: 'inherit',
-                    fontSize: '0.85rem',
-                    '& fieldset': { borderColor: '#bfdbfe' },
-                    '&:hover fieldset': { borderColor: BRAND_PRIMARY },
-                    '&.Mui-focused fieldset': { borderColor: BRAND_PRIMARY },
-                  },
-                }}
-              />
+              {!localStorage.getItem('token') ? (
+                <Box sx={{ mt: 1.5, textAlign: 'center' }}>
+                  <Typography sx={{ fontSize: '0.8rem', color: BRAND_MUTED, mb: 1 }}>
+                    Please sign in or register to submit this official ticket.
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => { setOpen(false); window.location.href = '/login'; }}
+                    sx={{
+                      background: `linear-gradient(135deg, ${BRAND_DARK} 0%, ${BRAND_PRIMARY} 100%)`,
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      py: 1,
+                      borderRadius: '8px',
+                      '&:hover': {
+                        background: `linear-gradient(135deg, #1e293b 0%, #1e40af 100%)`,
+                      },
+                    }}
+                  >
+                    Sign In / Register
+                  </Button>
+                </Box>
+              ) : (
+                <>
+                  <TextField
+                    size="small"
+                    fullWidth
+                    placeholder="Your contact phone number"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                    sx={{
+                      mt: 1.5,
+                      mb: 1.25,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '8px',
+                        fontFamily: 'inherit',
+                        fontSize: '0.85rem',
+                        '& fieldset': { borderColor: '#bfdbfe' },
+                        '&:hover fieldset': { borderColor: BRAND_PRIMARY },
+                        '&.Mui-focused fieldset': { borderColor: BRAND_PRIMARY },
+                      },
+                    }}
+                  />
 
-              <Button
-                variant="contained"
-                fullWidth
-                startIcon={<CheckIcon />}
-                onClick={handleConfirmTicket}
-                disabled={loading}
-                sx={{
-                  background: `linear-gradient(135deg, ${BRAND_DARK} 0%, ${BRAND_PRIMARY} 100%)`,
-                  fontWeight: 700,
-                  fontSize: '0.85rem',
-                  py: 1,
-                  borderRadius: '8px',
-                  '&:hover': {
-                    background: `linear-gradient(135deg, #1e293b 0%, #1e40af 100%)`,
-                  },
-                }}
-              >
-                Register Ticket
-              </Button>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    startIcon={<CheckIcon />}
+                    onClick={handleConfirmTicket}
+                    disabled={loading}
+                    sx={{
+                      background: `linear-gradient(135deg, ${BRAND_DARK} 0%, ${BRAND_PRIMARY} 100%)`,
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      py: 1,
+                      borderRadius: '8px',
+                      '&:hover': {
+                        background: `linear-gradient(135deg, #1e293b 0%, #1e40af 100%)`,
+                      },
+                    }}
+                  >
+                    Register Ticket
+                  </Button>
+                </>
+              )}
             </Paper>
           )}
 
