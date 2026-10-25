@@ -17,7 +17,7 @@ class ChatbotService {
     const greetings = ['hi', 'hello', 'namaste', 'hey', 'good morning', 'good afternoon', 'good evening', 'help'];
     if (greetings.includes(textLower) || /^hi\b|^hello\b|^namaste\b/i.test(textLower) && textLower.split(' ').length <= 3) {
       return {
-        reply: `👋 **Namaste! Welcome to Nepal Telecom Support Assistant.**
+        reply: `👋 **Namaste! Welcome to TelcoResolve Support Assistant.**
 
 How can I assist you today? You can:
 1. **Report an issue** (e.g., *"My fiber internet is slow"* or *"SIM card not working"*)
@@ -94,7 +94,7 @@ If you have a ticket ID, please type it in the format: **\`CMP100201\`**.`,
       const topDeptName = topDept.length ? topDept[0]._id : 'Fiber Team';
 
       return {
-        reply: `📊 **Nepal Telecom Manager AI Digest**:
+        reply: `📊 **TelcoResolve Manager AI Digest**:
 • **Active Complaints Today**: ${totalComplaints}
 • **Top Issue Category**: \`${topCatName}\`
 • **Most Overloaded Department**: \`${topDeptName}\`

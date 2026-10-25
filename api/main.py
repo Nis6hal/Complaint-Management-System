@@ -17,7 +17,7 @@ from ml.preprocess import clean_text
 from ml.predict_distilbert import DistilBertComplaintPredictor
 
 app = FastAPI(
-    title="Nepal Telecom Hybrid AI Engine API",
+    title="TelcoResolve Hybrid AI Engine API",
     description="FastAPI service serving ML models, sentiment scoring, duplicate similarity matching, and AI recommendations.",
     version="2.0.0"
 )

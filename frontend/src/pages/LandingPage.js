@@ -61,7 +61,7 @@ export default function LandingPage() {
   const faqs = [
     {
       q: 'How does the AI Assistant diagnose telecom complaints?',
-      a: 'The system uses an NLP machine learning model combined with Nepal Telecom support rules to automatically detect issue categories (Fiber Cut, LOS Red, Slow Internet, Billing, SIM VoLTE), predict priority levels, and provide instant troubleshooting guidance before ticket registration.'
+      a: 'The system uses an NLP machine learning model combined with telecom support rules to automatically detect issue categories (Fiber Cut, LOS Red, Slow Internet, Billing, SIM VoLTE), predict priority levels, and provide instant troubleshooting guidance before ticket registration.'
     },
     {
       q: 'How do priority levels work?',
@@ -93,7 +93,7 @@ export default function LandingPage() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span className="landing-brand-text">TelcoResolve</span>
               <span style={{ fontSize: 10, color: 'var(--slate-500)', fontWeight: 600, letterSpacing: '0.04em' }}>
-                NEPAL TELECOM PORTAL
+                SUPPORT PORTAL
               </span>
             </div>
           </div>
@@ -181,7 +181,7 @@ export default function LandingPage() {
       <section className="landing-hero">
         <div className="landing-hero-badge">
           <span className="pulse-green-dot" />
-          <span>Nepal Telecom Issue & Dispute Resolution Portal</span>
+          <span>Operational Telecom Issue & Dispute Management</span>
         </div>
 
         <h1 className="landing-hero-title">
@@ -295,7 +295,7 @@ export default function LandingPage() {
             <span className="step-number">02</span>
             <h3>NOC Triage & Assignment</h3>
             <p>
-              Nepal Telecom operations team reviews the ticket, verifies priority, assigns appropriate field engineers, 
+              Operations and NOC team reviews the ticket, verifies priority, assigns appropriate field engineers, 
               and documents initial diagnostic remarks.
             </p>
           </div>
@@ -444,7 +444,7 @@ export default function LandingPage() {
           <div className="footer-brand">
             <Radio size={18} color="#2563eb" />
             <span style={{ fontWeight: 700, color: 'var(--slate-900)' }}>TelcoResolve</span>
-            <span style={{ color: 'var(--slate-400)' }}>— Nepal Telecom Complaint System</span>
+            <span style={{ color: 'var(--slate-400)' }}>— Telecom Complaint Management System</span>
           </div>
           <div className="footer-links">
             <Link to="/login">Sign In</Link>

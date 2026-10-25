@@ -51,7 +51,7 @@ class AIService {
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) return null;
 
-    const prompt = `Classify this Nepal Telecom customer complaint. Respond with ONLY valid JSON, no markdown, no explanation:
+    const prompt = `Classify this telecom customer complaint. Respond with ONLY valid JSON, no markdown, no explanation:
 
 {
   "category": "Fiber Cut | LOS Red | Internet Slow | SIM Activation | Billing | IPTV | Mobile Issue | Landline | Broadband | Other",
@@ -179,7 +179,7 @@ Complaint: "${complaintText}"`;
       'Voice Call': 'Enable VoLTE in mobile SIM network settings and restart phone.',
       'SMS Failure': 'Verify SMS Service Center Number (+9779851000000) in SMS app settings.',
       'Recharge Issue': 'Wait 5 minutes for payment gateway webhooks. Check wallet transaction ID in bank statement.',
-      'Billing': 'Check account statement in NTC Mobile App or dial *400#.',
+      'Billing': 'Check account statement in subscriber portal or mobile app.',
       'IPTV': 'Restart NetTV Set-Top Box and check HDMI cable connection to TV.'
     };
     return adviceMap[category] || 'Restart device and verify cable connections.';
@@ -200,12 +200,12 @@ Complaint: "${complaintText}"`;
           messages: [
             {
               role: 'system',
-              content: `You are Aastha, a warm, empathetic, and highly professional customer support representative for Nepal Telecom (NTC).
+              content: `You are Aastha, a warm, empathetic, and highly professional customer support representative for TelcoResolve.
 Talk like a helpful human support specialist rather than a rigid robot. 
 
 Guidelines:
 1. Greet warmly (e.g. "I understand how frustrating this must be for you...") matching the customer sentiment.
-2. Provide concise, clear, and actionable troubleshooting steps for their issue (e.g. ONT router checks, PON/LOS lights, FTTH fiber cord, Namaste Pay, SIM VoLTE, NetTV).
+2. Provide concise, clear, and actionable troubleshooting steps for their issue (e.g. ONT router checks, PON/LOS lights, FTTH fiber cord, payment portal, SIM VoLTE, IPTV).
 3. Keep the response natural, friendly, and end by asking if they would like you to officially file a support ticket with our engineering team.`
             },
             {
