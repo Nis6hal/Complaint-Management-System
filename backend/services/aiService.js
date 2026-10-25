@@ -72,7 +72,7 @@ Complaint: "${complaintText}"`;
           messages: [
             { role: 'user', content: prompt }
           ],
-          max_tokens: 200,
+          max_tokens: 350,
           temperature: 0.1
         },
         {
@@ -80,7 +80,7 @@ Complaint: "${complaintText}"`;
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
           },
-          timeout: 5000
+          timeout: 8000
         }
       );
 
@@ -213,7 +213,7 @@ Guidelines:
               content: `User Issue: "${userText}". ML System Category: "${mlCategory}". Customer Sentiment: "${sentiment}". Please respond warmly to the user.`
             }
           ],
-          max_tokens: 220,
+          max_tokens: 800,
           temperature: 0.7
         },
         {
@@ -221,7 +221,7 @@ Guidelines:
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
           },
-          timeout: 4500
+          timeout: 10000
         }
       );
 
