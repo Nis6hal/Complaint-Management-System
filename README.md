@@ -1,21 +1,21 @@
-# Nepal Telecom AI-Powered Complaint Management System (CMS)
+# TelcoResolve — AI-Powered Telecom Complaint Management System (CMS)
 
-A production-grade, enterprise-ready **Hybrid AI Complaint Management System** tailored for Nepal Telecom (NTC). This system enhances a classic MERN stack (MongoDB, Express, React, Node.js) with a Python FastAPI Machine Learning & Deep Learning Inference Engine (DistilBERT / TF-IDF Ensemble).
+A production-grade, full-stack **Hybrid AI Complaint Management System** designed for modern telecommunications service providers. Built with a MERN stack (MongoDB, Express, React, Node.js) paired with a high-performance Python FastAPI Machine Learning and Deep Learning inference server (DistilBERT / TF-IDF Ensemble + Groq LLM fallback).
 
 ---
 
-## 🌟 System Overview & How It Works
+## 🌟 System Architecture & Workflow
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                             React.js Frontend                               │
-│        (MUI Components, Interactive AI Chatbot Widget, AI Analytics)        │
+│                       React.js Frontend (TelcoResolve)                      │
+│   (Responsive UI, Site-Wide AI Chatbot Widget, Quick Tracker, AI NOC Digest)│
 └──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │ REST API (Axios)
+                                       │ REST API (Axios / JWT)
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                          Node.js / Express Backend                          │
-│          (Authentication, Complaint Management, Chatbot Service)            │
+│          (Authentication, Complaint Management, Chatbot Engine)             │
 └──────────────┬───────────────────────────────────────────────┬──────────────┘
                │                                               │
         MongoDB Database                               HTTP Calls (Axios)
@@ -26,25 +26,43 @@ A production-grade, enterprise-ready **Hybrid AI Complaint Management System** t
                │                            │  (DistilBERT / TF-IDF Ensemble, │
                │                            │   Sentiment, Cosine Similarity) │
                │                            └─────────────────────────────────┘
-               ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
+               ▼                                               │
+┌──────────────────────────────────────────────────────────────┴──────────────┐
 │                          Hybrid AI Decision Engine                          │
-│   - ML Models: Strict Source-of-Truth for Category, Priority & Routing      │
-│   - Rule / LLM Layer: Conversational Dialogue, Summaries & Troubleshooting   │
+│   • ML Server (FastAPI): Source of truth for Category, Priority & Routing   │
+│   • Groq LLaMA3 / Fallback: Conversational Troubleshooting & Empathetic Chat│
+│   • Cosine Similarity Engine: TF-IDF duplicate ticket detection (>85%)      │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Key Workflow Highlights
-1. **Automated ML Classification**: When a customer submits a complaint (via web or interactive AI Chatbot), the text is processed by the **FastAPI Machine Learning Server**.
-2. **Multi-Task Prediction**: The ML engine predicts:
-   - **Category** (*Fiber Cut, LOS Red, Internet Slow, SIM Activation, Billing, IPTV, etc.*)
-   - **Priority & Severity** (*Critical, High, Medium, Low*)
-   - **Target Department** (*Fiber Team, Mobile Support, Billing, Network Operations*)
-   - **Customer Sentiment** (*Happy, Neutral, Frustrated, Angry*)
-   - **Prediction Confidence Score**
-3. **Smart Troubleshooting**: Before registering a ticket, the AI Chatbot suggests domain-specific self-fix steps (e.g. checking ONT router LOS lights or VoLTE mobile settings).
-4. **Duplicate Ticket Prevention**: Calculates TF-IDF Cosine Similarity (>85%) against existing database tickets to prevent duplicate spam.
-5. **Manager AI Analytics**: Provides real-time SLA metrics, category breakdowns, department load, and next-day complaint forecasting.
+---
+
+## ✨ Key Features
+
+### 🤖 Intelligent AI Chatbot Assistant (Aastha)
+- **Site-Wide Availability**: Available globally across landing page, subscriber dashboard, and admin console.
+- **Guest & Authenticated Sessions**: Guests can get instant self-service troubleshooting without logging in; authenticated users can register tickets in 1-click.
+- **Natural Language Diagnostics**: Understands English and mixed Romanized ("Nepglish") queries (e.g., *"LOS red light blinks"* or *"router tataera net aayena"*).
+- **Domain-Specific Troubleshooting**: Actionable steps for ONT optical routers, patch cords, 4G/5G mobile settings, VoLTE, and IPTV before filing tickets.
+- **Quick Controls**:
+  - 🔄 **1-Click Reset / Restart Conversation**
+  - 📋 **Copy to Clipboard** on response bubbles with instant visual feedback
+  - 📱 **Auto-Prefill Contact Phone** from subscriber profile
+  - 📲 **Mobile Bottom-Sheet**: Native pull-handle drawer with touch-friendly spacing and virtual keyboard support.
+
+### 🌐 Modernized & Mobile-Responsive Landing Page
+- **Clean TelcoResolve Branding**: Sleek dark navy and vibrant blue palette (`#0f172a`, `#1d4ed8`).
+- **Interactive Quick Ticket Tracker**: Instant status lookup directly from the hero section.
+- **Interactive FAQ Accordion**: Expandable Q&A items with smooth chevron transitions.
+- **Service Category Pills**: FTTH Fiber, Mobile 4G/5G, Billing & Recharge, Landline & IPTV.
+- **Operational Pillars & 3-Stage Lifecycle Stepper**: Transparent triage, assignment, and resolution.
+- **Mobile Navigation**: Collapsible hamburger menu and app-style slide-down drawer.
+
+### 📊 Operations & Admin NOC Dashboard
+- **Automated Routing**: Routes incoming complaints to the correct department (*Fiber Team, Mobile Support, Billing, Network Operations*).
+- **Severity Prediction**: Auto-prioritizes tickets into *Critical, High, Medium, Low* based on text severity.
+- **Duplicate Prevention**: Vectorizes complaints against open tickets to flag similar issues.
+- **Real-Time Analytics**: Visual breakdown of category frequency, department backlog, sentiment distribution, and SLA resolution velocity.
 
 ---
 
@@ -54,12 +72,12 @@ A production-grade, enterprise-ready **Hybrid AI Complaint Management System** t
 complaint-management-system/
 │
 ├── dataset_generator/          # Synthetic Telecom Complaint Data Generator
-│   ├── generator.py            # Main generation pipeline runner
-│   ├── complaint_templates.py  # Telecom categories, patterns & subcategories
-│   ├── nepali_variations.py    # Nepglish text variations & typo engine
-│   ├── locations.py            # Nepal Geography (Provinces & Districts)
-│   ├── engineers.py            # Engineer assignment database
-│   └── resolutions.py          # SLA resolution text templates
+│   ├── generator.py            # Master generation pipeline
+│   ├── complaint_templates.py  # Service categories, issues & subcategories
+│   ├── nepali_variations.py    # Romanized Nepglish phrases & typo synthesizer
+│   ├── locations.py            # Province and district mapping
+│   ├── engineers.py            # NOC technician assignment registry
+│   └── resolutions.py          # SLA field resolution text templates
 │
 ├── dataset/                    # Generated CSV Datasets
 │   ├── complaints.csv          # Master dataset (15,000 records)
@@ -67,52 +85,42 @@ complaint-management-system/
 │   ├── validation.csv          # 10% Validation split (1,500 rows)
 │   └── test.csv                # 10% Test split (1,500 rows)
 │
-├── ml/                         # Machine Learning & NLP Core
-│   ├── preprocess.py           # Text cleaning, NLTK stop words & Lemmatization
-│   ├── train.py                # Multi-model evaluation (LogReg, NB, SVM, RF)
+├── ml/                         # Machine Learning Core
+│   ├── preprocess.py           # Text cleaning, custom stopwords & lemmatization
+│   ├── train.py                # Multi-model evaluation (LogReg, LinearSVC, MNB, RF)
 │   ├── train_distilbert.py     # DistilBERT Transformer fine-tuning script
-│   ├── evaluate.py             # Metrics computation (Acc, Prec, Rec, F1)
-│   ├── predict.py              # Baseline ML inference engine
+│   ├── evaluate.py             # Performance metric computation (Acc, Prec, Rec, F1)
+│   ├── predict.py              # TF-IDF inference engine
 │   ├── predict_distilbert.py   # DistilBERT production inference engine
-│   ├── reports/                # Confusion matrix visual heatmap plots
-│   └── saved_model.pkl         # Production model package (Joblib)
+│   ├── reports/                # Heatmaps and confusion matrices
+│   └── saved_model.pkl         # Serialized production pipeline
 │
 ├── api/                        # FastAPI High-Performance Model Endpoint
 │   ├── main.py                 # FastAPI server (POST /predict, POST /duplicate-check)
 │   └── schemas.py              # Pydantic request/response validation schemas
 │
-├── backend/                    # MERN Stack Node.js/Express Backend
+├── backend/                    # Node.js & Express REST API
 │   ├── controllers/            # Controller logic (auth, complaints, AI)
-│   ├── middleware/             # JWT Authentication & role protection
-│   ├── models/                 # Mongoose schema definitions (User, Complaint)
-│   ├── routes/                 # Express API routes (/api/auth, /api/complaints, /api/ai)
-│   ├── services/               # aiService & stateful chatbotService
-│   └── server.js               # Main Express app entrypoint
+│   ├── middleware/             # JWT auth & optionalProtect middleware
+│   ├── models/                 # Mongoose schemas (User, Complaint)
+│   ├── routes/                 # API routes (/api/auth, /api/complaints, /api/ai)
+│   ├── services/               # aiService (Groq LLM) & chatbotService
+│   └── server.js               # Express application entrypoint
 │
-├── frontend/                   # MERN Stack React.js Frontend
-│   ├── src/components/         # Reusable UI components & AIChatbotWidget.jsx
-│   ├── src/pages/              # Dashboard, Admin, Profile & AIDashboardPage.jsx
-│   └── src/App.js              # React Router setup
+├── frontend/                   # React.js Client Application
+│   ├── src/components/         # AIChatbotWidget, Header, Sidebar
+│   ├── src/pages/              # LandingPage, Dashboard, MyComplaints, AdminDashboard, etc.
+│   ├── src/index.css           # TelcoResolve responsive design system
+│   └── src/App.js              # Application routing & global providers
 │
 └── README.md
 ```
 
 ---
 
-## 🧠 How the Models are Trained & Evaluated
+## 🧠 Machine Learning Benchmark Results
 
-### 1. Dataset Generation
-- Data is generated via `dataset_generator/generator.py` producing 15,000+ realistic Nepal Telecom complaints.
-- Includes realistic English, mixed Nepali-English ("Nepglish" e.g., *"WiFi xa tara internet chaina"*), user typos, technical jargon (*PPPoE, BGP, ONT, VoLTE*), and regional location mappings across all 7 provinces of Nepal.
-
-### 2. Text Preprocessing & Feature Extraction (`ml/preprocess.py`)
-- **Cleaning**: Lowercasing, removal of URLs, special characters, and digits.
-- **Stopwords**: Standard English stopwords + custom Nepglish stopwords (`chha`, `bhayena`, `gardinus`, `plz`, `ntc`).
-- **Lemmatization**: NLTK WordNet Lemmatization.
-- **Vectorization**: Sublinear TF-IDF with `ngram_range=(1, 2)` (Unigrams + Bigrams).
-
-### 3. Model Benchmark Results (`ml/evaluate.py`)
-Multiple baseline classifiers were trained and benchmarked:
+Multiple baseline algorithms were trained on the preprocessed 15,000-record dataset:
 
 | Model Algorithm | Accuracy | Precision | Recall | F1-Score |
 | :--- | :---: | :---: | :---: | :---: |
@@ -121,34 +129,52 @@ Multiple baseline classifiers were trained and benchmarked:
 | **Naive Bayes (MultinomialNB)** | **1.00** | **1.00** | **1.00** | **1.00** |
 | **Random Forest** | **1.00** | **1.00** | **1.00** | **1.00** |
 
-### 4. Deep Learning Transformer (`ml/train_distilbert.py`)
-- Fine-tuned **DistilBERT** (`distilbert-base-uncased`) for deep semantic classification, allowing future-proof deep learning inference without altering any frontend interfaces.
+Fine-tuned **DistilBERT** (`distilbert-base-uncased`) is also available as a deep learning classifier via `ml/predict_distilbert.py`.
 
 ---
 
-## 🚀 How to Run the System (Step-by-Step)
+## 🚀 Getting Started (Step-by-Step)
 
 ### Prerequisites
-- **Node.js** (v16+)
+- **Node.js** (v18+)
 - **Python** (v3.9+)
-- **MongoDB** (Local or MongoDB Atlas)
+- **MongoDB** (Local instance or MongoDB Atlas connection URI)
 
 ---
 
-### Step 1: Install Dependencies
+### Step 1: Environment Variables Setup
 
-#### Python Dependencies:
+#### 1. Backend (`backend/.env`):
+```env
+PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/ComplaintMS?retryWrites=true&w=majority
+JWT_SECRET=your_super_secret_jwt_key
+NODE_ENV=development
+FASTAPI_URL=http://127.0.0.1:8000
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+#### 2. Frontend (`frontend/.env`):
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+```
+
+---
+
+### Step 2: Install Dependencies
+
+#### Python ML & API:
 ```bash
 pip install nltk scikit-learn xgboost pandas faker fastapi uvicorn matplotlib seaborn joblib transformers torch
 ```
 
-#### Node Backend Dependencies:
+#### Node.js Backend:
 ```bash
 cd backend
 npm install
 ```
 
-#### React Frontend Dependencies:
+#### React Frontend:
 ```bash
 cd frontend
 npm install
@@ -156,54 +182,56 @@ npm install
 
 ---
 
-### Step 2: Generate Dataset & Train ML Models
+### Step 3: (Optional) Generate Dataset & Train Models
 
 ```bash
-# 1. Generate 15,000 synthetic records
+# Generate 15,000 synthetic telecom complaint records
 python -m dataset_generator.generator
 
-# 2. Train and evaluate baseline ML models
+# Train baseline ML classifiers
 python -m ml.train
 
-# 3. (Optional) Fine-tune DistilBERT Transformer model
+# (Optional) Fine-tune DistilBERT Transformer
 python -m ml.train_distilbert
 ```
 
 ---
 
-### Step 3: Launch Services
+### Step 4: Run the Application
 
-Open 3 terminal windows to run all system layers:
+Open **3 terminals** to run the complete ecosystem:
 
-#### Terminal 1: Launch FastAPI Model Server (Port 8000)
+#### Terminal 1 — FastAPI Machine Learning Server (Port 8000):
 ```bash
 uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-#### Terminal 2: Launch Node.js Backend Server (Port 5000)
+#### Terminal 2 — Node.js / Express Backend (Port 5000):
 ```bash
 cd backend
-npm run dev  # or node server.js
+npm run dev
 ```
 
-#### Terminal 3: Launch React Frontend Application (Port 3000)
+#### Terminal 3 — React Frontend (Port 3000):
 ```bash
 cd frontend
 npm start
 ```
 
+Visit **`http://localhost:3000`** in your browser.
+
 ---
 
 ## 🧪 Testing API Endpoints
 
-### Test ML Inference (`POST http://127.0.0.1:8000/predict`)
+### 1. Test ML Prediction (`POST http://127.0.0.1:8000/predict`)
 ```bash
 curl -X POST "http://127.0.0.1:8000/predict" \
      -H "Content-Type: application/json" \
-     -d '{"complaint": "My ONT router LOS light is blinking red since rain."}'
+     -d '{"complaint": "My optical fiber router LOS light is blinking red since yesterday."}'
 ```
 
-**Response:**
+**Sample Response:**
 ```json
 {
   "category": "LOS Red",
@@ -211,21 +239,18 @@ curl -X POST "http://127.0.0.1:8000/predict" \
   "department": "Fiber Team",
   "confidence": 0.96,
   "sentiment": "Frustrated",
-  "aiSummary": "Possible los red issue: My ont router los light is blinking red..."
+  "aiSummary": "Possible los red issue: My optical fiber router los light..."
 }
 ```
 
-### Test AI Chatbot (`POST http://localhost:5000/api/ai/chat`)
+### 2. Test AI Chatbot (`POST http://localhost:5000/api/ai/chat`)
 ```bash
 curl -X POST "http://localhost:5000/api/ai/chat" \
      -H "Content-Type: application/json" \
-     -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-     -d '{"message": "What is the status of ticket CMP000345?"}'
+     -d '{"message": "My fiber internet is very slow and disconnects frequently."}'
 ```
 
 ---
 
-## 📌 Features & Architecture Compliance
-- **Decoupled Architecture**: Clean separation between React UI, Express Backend, FastAPI Engine, and ML Model artifacts.
-- **SOLID Principles**: Controllers, services, and models are isolated in separate files.
-- **Vercel / Render Ready**: Frontend and backend are pre-configured with environment variables (`process.env.FASTAPI_URL`, `process.env.MONGO_URI`) for production deployment.
+## 🛡️ License & Acknowledgements
+This project is an open, production-ready demonstration platform showcasing decoupled MERN architecture with stateful Python NLP/LLM AI services. Built with modern web accessibility, responsive ergonomics, and industry-standard design principles.
